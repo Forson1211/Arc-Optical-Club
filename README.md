@@ -9,7 +9,7 @@ Full-stack NGO website starter for Arc Optical Club (AOC).
 
 ## Requirements
 
-- Node.js 20+
+- Node.js 22.x
 - npm
 - MongoDB local instance or MongoDB Atlas connection string
 
