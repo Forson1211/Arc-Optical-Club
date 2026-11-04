@@ -5,21 +5,30 @@ export default function BrandLogo({ className = '', variant = 'light' }: Props) 
 
   return (
     <svg
-      viewBox={isColor ? '52 68 369 135' : '73 95 455 180'}
+      viewBox="0 0 369 135"
       width={160}
       height={58}
       className={className}
       aria-hidden="true"
       focusable="false"
     >
-      {/* Frame the supplied artwork without its transparent canvas padding. */}
-      <image
-        href={isColor ? '/images/arc-optical-club-logo-color.png' : '/images/arc-optical-club-logo-light.png'}
+      {/* Normalize both source crops to the same visible frame when variants swap. */}
+      <svg
         x={0}
         y={0}
-        width={isColor ? 486 : 607}
-        height={isColor ? 261 : 355}
-      />
+        width={369}
+        height={135}
+        viewBox={isColor ? '52 68 369 135' : '73 95 455 180'}
+        preserveAspectRatio="none"
+      >
+        <image
+          href={isColor ? '/images/arc-optical-club-logo-color.png' : '/images/arc-optical-club-logo-light.png'}
+          x={0}
+          y={0}
+          width={isColor ? 486 : 607}
+          height={isColor ? 261 : 355}
+        />
+      </svg>
     </svg>
   )
 }

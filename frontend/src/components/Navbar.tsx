@@ -105,7 +105,7 @@ export default function Navbar() {
           {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
         </button>
         <Link to="/" aria-label="Arc Optical Club home" className="order-1 inline-flex shrink-0 items-center lg:order-none" onClick={closeMenus}>
-          <BrandLogo variant={isOverlay ? 'light' : 'color'} className="h-auto w-[132px] sm:w-36" />
+          <BrandLogo variant={isOverlay ? 'light' : 'color'} className="block h-auto w-[132px] sm:w-36" />
         </Link>
 
         <nav className="hidden items-center gap-7 lg:flex xl:gap-9" aria-label="Main navigation">
