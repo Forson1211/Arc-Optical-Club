@@ -38,7 +38,7 @@ export default function Team() {
         <div className="max-w-2xl">
           <p className="eyebrow !text-arc-yellow">The people behind Arc</p>
           <h1 id="team-heading" className="mt-4 text-4xl font-extrabold tracking-[-0.045em] text-white sm:text-5xl">Our Team</h1>
-          <p className="mt-5 max-w-xl text-sm leading-7 text-white/75 sm:text-base">Students, professionals and volunteers working together to bring eye care, education and research closer to communities across Ghana.</p>
+          <p className="mt-5 max-w-xl text-sm leading-6 sm:leading-7 text-white/75 sm:text-base">Students, professionals and volunteers working together to bring eye care, education and research closer to communities across Ghana.</p>
         </div>
 
         <div className="mt-10 grid grid-cols-2 gap-x-5 gap-y-9 sm:mt-12 sm:grid-cols-3 sm:gap-x-7 sm:gap-y-11 lg:grid-cols-4">

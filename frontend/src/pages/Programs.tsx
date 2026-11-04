@@ -40,7 +40,7 @@ export default function Programs() {
                 </div>
                 {open && (
                   <div id={`program-detail-${index}`} className="mt-6 border-t border-slate-100 pt-5 sm:pl-[236px] lg:pl-[312px]">
-                    <p className="text-sm leading-7 text-arc-slate">{program.detail}</p>
+                    <p className="text-sm leading-6 sm:leading-7 text-arc-slate">{program.detail}</p>
                     <Link to={`/contact?subject=${encodeURIComponent(program.title)}`} className="mt-4 inline-flex text-sm font-extrabold text-arc-blue underline-offset-4 hover:underline">Get involved with this program</Link>
                   </div>
                 )}
