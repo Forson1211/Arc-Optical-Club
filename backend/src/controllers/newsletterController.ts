@@ -1,8 +1,9 @@
 import type { Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
-import { NewsletterSubscriber } from '../models/NewsletterSubscriber.js'
+import { email } from '../lib/validation.js'
+import { findRecord, HttpError, insertRecord, updateRecord } from '../lib/store.js'
 
-const subscriberSchema = z.object({ email: z.string().trim().email().max(180) })
+const subscriberSchema = z.object({ email })
 
 export async function subscribeToNewsletter(req: Request, res: Response, next: NextFunction) {
   try {
@@ -11,11 +12,16 @@ export async function subscribeToNewsletter(req: Request, res: Response, next: N
       res.status(400).json({ success: false, message: 'Please provide a valid email address.' })
       return
     }
-    await NewsletterSubscriber.updateOne(
-      { email: parsed.data.email.toLowerCase() },
-      { $set: { status: 'subscribed' }, $setOnInsert: { email: parsed.data.email.toLowerCase() } },
-      { upsert: true },
-    )
+    const existing = await findRecord('newslettersubscribers', 'email', parsed.data.email)
+    if (existing) await updateRecord('newslettersubscribers', existing.id, { status: 'subscribed' })
+    else {
+      try { await insertRecord('newslettersubscribers', { email: parsed.data.email, status: 'subscribed' }, ['email']) }
+      catch (error) {
+        if (!(error instanceof HttpError) || error.status !== 409) throw error
+        const concurrent = await findRecord('newslettersubscribers', 'email', parsed.data.email)
+        if (concurrent) await updateRecord('newslettersubscribers', concurrent.id, { status: 'subscribed' })
+      }
+    }
     res.status(201).json({ success: true, message: 'Thank you for subscribing.' })
   } catch (error) {
     next(error)

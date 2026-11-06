@@ -13,18 +13,18 @@ const impact = [
 
 export default function Home() {
   return (
-    <>
+    <main>
       <section className="home-hero" aria-labelledby="hero-heading">
         <HeroBackground />
         <div className="home-hero-shade" aria-hidden="true" />
 
         <Container className="relative z-10 flex flex-1 flex-col items-center justify-center pb-20 pt-52 text-center sm:items-start sm:pb-20 sm:pt-44 sm:text-left">
           <h1 id="hero-heading" className="hero-reveal hero-title">
-            Bringing vision<br />
-            into focus, together
+            <span className="block whitespace-nowrap">Bringing vision</span>
+            <span className="block whitespace-nowrap">into focus, together</span>
           </h1>
           <p className="hero-reveal mt-5 max-w-xs text-sm leading-6 text-white/80 sm:mt-6 sm:max-w-[32rem] sm:text-base sm:leading-7">
-            <span className="sm:hidden">Free eye screenings, education and research for healthier communities across Ghana.</span>
+            <span className="hero-mobile-description sm:hidden"><span>Free eye screenings, education and research for</span><span>healthier communities across Ghana.</span></span>
             <span className="hidden sm:inline">Free eye screenings. Eye-health education. Research that matters. Together, we’re making clearer sight a reality for communities across Ghana.</span>
           </p>
           <div className="hero-reveal mt-7 flex w-full max-w-xs flex-col justify-start gap-3 sm:mt-8 sm:max-w-none sm:flex-row sm:gap-4">
@@ -63,6 +63,6 @@ export default function Home() {
       <WhyArc />
       <ScrollingGallery />
       <DonateFeature />
-    </>
+    </main>
   )
 }

@@ -1,13 +1,16 @@
 {
   "name": "arc-optical-club-backend",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "main": "dist/server.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "node scripts/dev.mjs",
     "build": "tsc",
     "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "setup:admin": "npm run build --silent && node dist/scripts/setupAdmin.js",
+    "test": "tsc -p tsconfig.test.json && node --test .test-build/tests/*.test.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

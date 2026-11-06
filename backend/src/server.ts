@@ -1,34 +1,29 @@
 import 'dotenv/config'
-import express from 'express'
-import cors from 'cors'
-import helmet from 'helmet'
-import rateLimit from 'express-rate-limit'
 import { connectDatabase } from './config/database.js'
-import contactRoutes from './routes/contactRoutes.js'
-import newsletterRoutes from './routes/newsletterRoutes.js'
-import { errorHandler, notFoundHandler } from './middleware/errorHandler.js'
+import { createApp } from './app.js'
+import { initializeStorage, listRecords, storageMode } from './lib/store.js'
+import { createAdmin } from './lib/auth.js'
 
-const app = express()
-const port = Number(process.env.PORT) || 5000
-
-app.use(helmet())
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }))
-app.use(express.json({ limit: '1mb' }))
-app.use(express.urlencoded({ extended: true }))
-app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 150, standardHeaders: 'draft-7', legacyHeaders: false }))
-
-app.get('/api/health', (_req, res) => {
-  res.json({ success: true, message: 'Arc Optical Club API is running.' })
-})
-
-app.use('/api/contact', contactRoutes)
-app.use('/api/newsletter', newsletterRoutes)
-
-app.use(notFoundHandler)
-app.use(errorHandler)
+const port = Number(process.env.PORT) || 5001
 
 connectDatabase()
-  .then(() => app.listen(port, () => console.log(`Arc Optical Club API listening on port ${port}`)))
+  .then(initializeStorage)
+  .then(async () => {
+    const admins = await listRecords('adminusers')
+    if (!admins.length && process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+      await createAdmin(process.env.ADMIN_EMAIL, process.env.ADMIN_PASSWORD)
+      console.log('Initial administrator created from server environment.')
+    } else if (!admins.length) {
+      console.log('No administrator exists yet. Run npm run setup:admin --workspace backend to create your account.')
+    }
+    createApp().listen(port, () => {
+      console.log(`Arc Optical Club API listening on port ${port} (${storageMode()} storage).`)
+      if (process.send) process.send({ type: 'api-ready', port })
+    }).once('error', error => {
+      console.error(`Could not start the API on port ${port}:`, error.message)
+      process.exit(1)
+    })
+  })
   .catch((error) => {
     console.error('Failed to initialize server:', error)
     process.exit(1)

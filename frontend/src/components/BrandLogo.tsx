@@ -1,7 +1,10 @@
-type Props = { className?: string; variant?: 'light' | 'color' }
+import { optimizedImageSrc } from '../lib/images'
+
+type Props = { className?: string; variant?: 'light' | 'color' | 'white' }
 
 export default function BrandLogo({ className = '', variant = 'light' }: Props) {
   const isColor = variant === 'color'
+  const isWhite = variant === 'white'
 
   return (
     <svg
@@ -18,15 +21,15 @@ export default function BrandLogo({ className = '', variant = 'light' }: Props) 
         y={0}
         width={369}
         height={135}
-        viewBox={isColor ? '52 68 369 135' : '73 95 455 180'}
+        viewBox={isColor ? '52 68 369 135' : isWhite ? '62 82 443 162' : '73 95 455 180'}
         preserveAspectRatio="none"
       >
         <image
-          href={isColor ? '/images/arc-optical-club-logo-color.png' : '/images/arc-optical-club-logo-light.png'}
+          href={optimizedImageSrc(isColor ? '/images/arc-optical-club-logo-color.png' : isWhite ? '/images/arc-optical-club-logo-white.png' : '/images/arc-optical-club-logo-light.png')}
           x={0}
           y={0}
-          width={isColor ? 486 : 607}
-          height={isColor ? 261 : 355}
+          width={isColor ? 486 : isWhite ? 583 : 607}
+          height={isColor ? 261 : isWhite ? 313 : 355}
         />
       </svg>
     </svg>

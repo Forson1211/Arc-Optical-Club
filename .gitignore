@@ -12,3 +12,6 @@ coverage/
 *.tsbuildinfo
 browser-check.html
 .vercel/
+backend/.data/
+backend/.test-build/
+.qa/

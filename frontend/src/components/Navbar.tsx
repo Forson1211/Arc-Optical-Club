@@ -118,15 +118,15 @@ export default function Navbar() {
                   type="button"
                   aria-expanded={expanded}
                   aria-controls={`desktop-nav-group-${index}`}
-                  className={`flex items-center gap-1.5 py-3 text-[13px] font-semibold transition ${active ? (isOverlay ? 'text-arc-yellow' : 'text-arc-blue') : navColor}`}
+                  className={`flex items-center gap-1.5 py-3 text-[15px] font-semibold transition ${active ? (isOverlay ? 'text-arc-yellow' : 'text-arc-blue') : navColor}`}
                   onClick={() => setActiveGroup(expanded ? null : group.label)}
                 >
-                  {group.label}<ChevronDown size={13} className={`transition ${expanded ? 'rotate-180' : ''}`} aria-hidden="true" />
+                  {group.label}<ChevronDown size={14} className={`transition ${expanded ? 'rotate-180' : ''}`} aria-hidden="true" />
                 </button>
                 {expanded && (
                   <div id={`desktop-nav-group-${index}`} className="absolute left-0 top-full grid min-w-48 gap-1 rounded-sm border-t-2 border-arc-yellow bg-white p-2 text-arc-navy shadow-xl">
                     {group.links.map((link) => (
-                      <NavLink key={link.to} to={link.to} onClick={closeMenus} className={({ isActive }) => `rounded-sm px-4 py-3 text-[13px] font-semibold transition hover:bg-arc-ice hover:text-arc-blue ${isActive ? 'bg-arc-ice text-arc-blue' : ''}`}>
+                      <NavLink key={link.to} to={link.to} onClick={closeMenus} className={({ isActive }) => `rounded-sm px-4 py-3 text-[14px] font-semibold transition hover:bg-arc-ice hover:text-arc-blue ${isActive ? 'bg-arc-ice text-arc-blue' : ''}`}>
                         {link.label}
                       </NavLink>
                     ))}
@@ -136,14 +136,14 @@ export default function Navbar() {
             )
           })}
           {directLinks.map((link) => (
-            <NavLink key={link.to} to={link.to} className={({ isActive }) => `py-3 text-[13px] font-semibold transition ${isActive ? (isOverlay ? 'text-arc-yellow' : 'text-arc-blue') : navColor}`}>
+            <NavLink key={link.to} to={link.to} className={({ isActive }) => `py-3 text-[15px] font-semibold transition ${isActive ? (isOverlay ? 'text-arc-yellow' : 'text-arc-blue') : navColor}`}>
               {link.label}
             </NavLink>
           ))}
         </nav>
 
         <div className="hidden items-center justify-end lg:flex">
-          <Link to="/donate" aria-label="Donate to Arc Optical Club" onClick={closeMenus} className="inline-flex h-11 w-11 items-center justify-center gap-5 rounded-sm bg-arc-yellow text-[11px] font-extrabold uppercase tracking-[0.08em] text-arc-navy transition hover:bg-[#ffd149] lg:w-auto lg:px-6">
+          <Link to="/donate" aria-label="Donate to Arc Optical Club" onClick={closeMenus} className="inline-flex h-11 w-11 items-center justify-center gap-5 rounded-sm bg-arc-yellow text-xs sm:text-[13px] font-extrabold uppercase tracking-[0.08em] text-arc-navy transition hover:bg-[#ffd149] lg:w-auto lg:px-6">
             <span className="hidden lg:inline">Donate Now</span>
 
           </Link>

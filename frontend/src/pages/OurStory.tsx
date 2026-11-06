@@ -1,3 +1,4 @@
+import SiteImage from '../components/SiteImage'
 import { Eye, HandHeart, Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Container from '../components/Container'
@@ -12,7 +13,7 @@ export default function OurStory() {
   return (
     <main className="bg-[#10394B] pb-16 sm:pb-20">
       <section className="relative min-h-[390px] overflow-hidden px-5 pb-32 pt-14 text-center text-white sm:min-h-[430px] sm:pt-16" aria-labelledby="story-heading">
-        <img src="/images/arc-team-hero.jpg" alt="Arc Optical Club volunteers celebrating together" className="absolute inset-0 h-full w-full object-cover object-[50%_40%]" />
+        <SiteImage loading="eager" fetchPriority="high" src="/images/arc-team-hero.jpg" alt="Arc Optical Club volunteers celebrating together" className="absolute inset-0 h-full w-full object-cover object-[50%_40%]" />
         <div className="absolute inset-0 bg-arc-navy/55" />
         <div className="relative mx-auto max-w-2xl">
           <h1 id="story-heading" className="text-4xl font-extrabold tracking-[-0.04em] sm:text-5xl">Who We Are</h1>
@@ -35,7 +36,7 @@ export default function OurStory() {
 
       <Container className="max-w-[920px] pt-14 sm:pt-16">
         <h2 className="text-center text-3xl font-extrabold tracking-[-0.035em] text-white sm:text-4xl">About Arc Optical Club</h2>
-        <div className="mt-6 grid gap-4 text-justify text-sm leading-6 sm:leading-7 text-white/75 sm:text-[15px]">
+        <div className="mt-5 grid gap-3 text-justify text-sm leading-[1.5] text-white/75 sm:text-[15px]">
           <p>Arc Optical Club is a registered NGO in Ghana, founded in October 2022. We bring together students and professionals from within and beyond the eye-care space, united by the belief that everyone deserves to see clearly.</p>
           <p>Our work is built on three pillars: Access, Research & Education, and Community. Through free screenings, eye-health education and research, we help bring eye care and practical knowledge closer to the people who need them.</p>
           <p>Since our beginnings, we have screened more than 850 people. Our initiatives include Sight For Kids, Operation Sight For All and Myopia Rescue, connecting community outreach with learning, awareness and support.</p>
