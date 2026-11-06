@@ -8,7 +8,7 @@ export type NewsArticle = { id: string; title: string; excerpt: string; author: 
 // Uploaded images belong to the API origin, including when it is hosted separately.
 export function contentImage(src: string) {
   if (!src.startsWith('/api/content/images/')) return src
-  return `${String(api.defaults.baseURL).replace(/\/$/, '')}/content/images/${src.split('/').at(-1)}`
+  return `${String(api.defaults.baseURL).replace(/\/$/, '')}/content/images/${src.split('/').slice(-1)[0]}`
 }
 export const articleDate = (value: string) => new Date(value).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Africa/Accra' })
 
