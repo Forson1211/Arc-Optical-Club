@@ -80,7 +80,7 @@ export default function Footer() {
   }
 
   return (
-    <footer id="site-footer" className="border-t-2 border-arc-yellow bg-[#10394B] text-white">
+    <footer id="site-footer" className="bg-[#10394B] text-white">
       {/* Newsletter Signup Row */}
       <div className="border-b border-white/10">
         <Container>

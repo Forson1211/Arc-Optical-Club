@@ -72,58 +72,56 @@ export function Pillars() {
                 role="button"
                 aria-pressed={isFlipped}
                 aria-label={`${title} pillar. Click to ${isFlipped ? 'flip back' : 'reveal explanations'}.`}
-                className="group h-[360px] w-full cursor-pointer select-none rounded-[1.75rem] [perspective:1000px] focus:outline-none focus-visible:ring-4 focus-visible:ring-arc-yellow"
+                className="group h-[250px] sm:h-[300px] md:h-[350px] w-full cursor-pointer select-none rounded-2xl sm:rounded-[1.75rem] [perspective:1000px] focus:outline-none focus-visible:ring-4 focus-visible:ring-arc-yellow"
               >
                 <div
-                  className={`relative h-full w-full rounded-[1.75rem] transition-transform duration-700 [transform-style:preserve-3d] ${
+                  className={`relative h-full w-full rounded-2xl sm:rounded-[1.75rem] transition-transform duration-700 [transform-style:preserve-3d] ${
                     isFlipped ? '[transform:rotateY(180deg)]' : ''
                   }`}
                 >
-                  {/* Front of Card: Bold & Big Letter A / R / C */}
-                  <div className="absolute inset-0 flex h-full w-full flex-col items-center justify-between rounded-[1.75rem] border border-arc-blue/10 bg-white p-8 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-xl [backface-visibility:hidden]">
+                  {/* Front of Card: Normal Shape & Clean Letter A / R / C without dot */}
+                  <div className="absolute inset-0 flex h-full w-full flex-col items-center justify-between rounded-2xl sm:rounded-[1.75rem] border border-arc-blue/10 bg-white p-5 sm:p-8 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-xl [backface-visibility:hidden]">
                     <div className="flex w-full items-center justify-between">
-                      <span className="text-xs font-extrabold uppercase tracking-widest text-arc-slate">Pillar</span>
-                      <span className="grid h-11 w-11 place-items-center rounded-2xl bg-arc-ice text-arc-blue transition group-hover:bg-arc-blue group-hover:text-white">
-                        <Icon size={22} />
+                      <span className="text-[11px] sm:text-xs font-extrabold uppercase tracking-widest text-arc-slate">Pillar</span>
+                      <span className="grid h-9 w-9 sm:h-11 sm:w-11 place-items-center rounded-xl sm:rounded-2xl bg-arc-ice text-arc-blue transition group-hover:bg-arc-blue group-hover:text-white">
+                        <Icon size={19} className="sm:h-[22px] sm:w-[22px]" />
                       </span>
                     </div>
 
                     <div className="my-auto text-center">
-                      <span className="block text-8xl font-black tracking-[-0.08em] text-arc-blue sm:text-9xl">
+                      <span className="block text-7xl font-black leading-none tracking-tight text-arc-blue sm:text-8xl md:text-9xl">
                         {letter}
-                        <span className="text-arc-yellow">.</span>
                       </span>
-                      <h3 className="mt-2 text-xl font-extrabold text-arc-navy sm:text-2xl">{title}</h3>
+                      <h3 className="mt-2 text-base font-extrabold text-arc-navy sm:mt-3 sm:text-xl md:text-2xl">{title}</h3>
                     </div>
 
-                    <div className="flex items-center gap-1.5 rounded-full bg-slate-100 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-arc-slate transition group-hover:bg-arc-blue/10 group-hover:text-arc-blue">
-                      <RotateCw size={13} className="transition-transform duration-500 group-hover:rotate-180" />
+                    <div className="flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-[11px] sm:px-3.5 sm:py-1.5 sm:text-xs font-bold uppercase tracking-wider text-arc-slate transition group-hover:bg-arc-blue/10 group-hover:text-arc-blue">
+                      <RotateCw size={12} className="transition-transform duration-500 group-hover:rotate-180" />
                       <span>Click to view details</span>
                     </div>
                   </div>
 
                   {/* Back of Card: Rotates 180deg to show full text explanations */}
-                  <div className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-[1.75rem] border border-arc-blue/15 bg-white p-8 shadow-soft [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                      <span className="text-3xl font-black text-arc-blue">
+                  <div className="absolute inset-0 flex h-full w-full flex-col justify-between rounded-2xl sm:rounded-[1.75rem] border border-arc-blue/15 bg-white p-5 sm:p-8 shadow-soft [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-3 sm:pb-4">
+                      <span className="text-2xl sm:text-3xl font-black text-arc-blue">
                         {letter}
-                        <span className="text-arc-yellow">.</span>
                       </span>
-                      <span className="grid h-11 w-11 place-items-center rounded-2xl bg-arc-blue/10 text-arc-blue">
-                        <Icon size={22} />
+                      <span className="grid h-9 w-9 sm:h-11 sm:w-11 place-items-center rounded-xl sm:rounded-2xl bg-arc-blue/10 text-arc-blue">
+                        <Icon size={19} className="sm:h-[22px] sm:w-[22px]" />
                       </span>
                     </div>
 
-                    <div className="my-auto py-2">
-                      <span className="text-xs font-bold uppercase tracking-widest text-arc-yellow">Overview</span>
-                      <h3 className="mt-1 text-2xl font-extrabold text-arc-navy">{title}</h3>
-                      <p className="mt-3 text-base leading-7 text-arc-slate sm:text-[17px]">{text}</p>
+                    <div className="my-auto py-1 sm:py-2">
+                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-arc-yellow">Overview</span>
+                      <h3 className="mt-0.5 text-base font-extrabold text-arc-navy sm:mt-1 sm:text-xl md:text-2xl">{title}</h3>
+                      <p className="mt-2 text-xs leading-5 sm:text-base sm:leading-7 text-arc-slate">{text}</p>
                     </div>
 
-                    <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-                      <span className="text-xs font-bold uppercase tracking-wider text-arc-blue">Arc Optical Club</span>
-                      <span className="flex items-center gap-1.5 text-xs font-bold text-arc-slate hover:text-arc-navy">
-                        <RotateCw size={13} /> Click to flip back
+                    <div className="flex items-center justify-between border-t border-slate-100 pt-3 sm:pt-4">
+                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-arc-blue">Arc Optical Club</span>
+                      <span className="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold text-arc-slate hover:text-arc-navy">
+                        <RotateCw size={12} /> Click to flip back
                       </span>
                     </div>
                   </div>

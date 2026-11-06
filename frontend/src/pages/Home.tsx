@@ -18,7 +18,7 @@ export default function Home() {
         <HeroBackground />
         <div className="home-hero-shade" aria-hidden="true" />
 
-        <Container className="relative z-10 flex flex-1 flex-col items-center justify-center pb-20 pt-52 text-center sm:items-start sm:pb-20 sm:pt-44 sm:text-left">
+        <Container className="relative z-10 flex flex-1 flex-col items-center justify-center pb-8 pt-32 text-center sm:items-start sm:pb-20 sm:pt-44 sm:text-left">
           <h1 id="hero-heading" className="hero-reveal hero-title">
             <span className="block whitespace-nowrap">Bringing vision</span>
             <span className="block whitespace-nowrap">into focus, together</span>
@@ -37,18 +37,17 @@ export default function Home() {
           </div>
         </Container>
 
-        <Container className="relative z-10 hidden sm:block">
-          <div className="flex flex-col items-center justify-between gap-8 border-t border-white/20 py-7 text-center md:flex-row md:gap-12 md:py-8 md:text-left">
-            <a href="#our-mission" className="group flex items-center gap-3 text-[10px] font-extrabold uppercase tracking-[0.17em] text-white/80 transition hover:text-white sm:text-[11px]">
+        <Container className="relative z-10">
+          <div className="flex flex-col items-center justify-between gap-5 border-t border-white/15 pb-8 pt-5 text-center sm:border-white/20 sm:py-7 md:flex-row md:gap-12 md:py-8 md:text-left">
+            <a href="#our-mission" className="hidden group items-center gap-3 text-[10px] font-extrabold uppercase tracking-[0.17em] text-white/80 transition hover:text-white sm:flex sm:text-[11px]">
               <span className="h-2 w-2 shrink-0 rounded-full bg-arc-yellow" aria-hidden="true" />
               Rooted in Ghana. United by purpose.
-
             </a>
-            <dl className="grid w-full max-w-lg grid-cols-3 md:w-auto md:min-w-[380px] md:gap-10 lg:gap-14">
+            <dl className="grid w-full grid-cols-3 gap-2 text-center sm:max-w-lg md:w-auto md:min-w-[380px] md:gap-10 lg:gap-14 md:text-left">
               {impact.map(({ value, label }) => (
-                <div key={label} className="flex flex-col px-2 text-center md:px-0 md:text-left">
-                  <dt className="mt-2 text-[9px] font-bold uppercase tracking-[0.12em] text-white/65 sm:text-[10px]">{label}</dt>
-                  <dd className="-order-1 text-[28px] font-extrabold leading-none tracking-[-0.04em] text-white sm:text-[32px]">{value}</dd>
+                <div key={label} className="flex flex-col px-1 text-center md:px-0 md:text-left">
+                  <dt className="mt-1.5 text-[8.5px] font-bold uppercase tracking-[0.06em] text-white/70 sm:mt-2 sm:text-[10px] sm:tracking-[0.12em]">{label}</dt>
+                  <dd className="-order-1 text-[22px] font-extrabold leading-none tracking-[-0.04em] text-white sm:text-[32px]">{value}</dd>
                 </div>
               ))}
             </dl>

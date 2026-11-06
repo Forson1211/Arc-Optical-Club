@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { ChevronDown, Menu, X } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 import BrandLogo from './BrandLogo'
 
 const groups = [
@@ -102,10 +103,37 @@ export default function Navbar() {
           aria-controls="mobile-navigation"
           onClick={() => { setOpen(!open); setActiveGroup(null); setMobileGroup(null) }}
         >
-          {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={open ? 'close' : 'open'}
+              initial={{ rotate: -90, opacity: 0, scale: 0.8 }}
+              animate={{ rotate: 0, opacity: 1, scale: 1 }}
+              exit={{ rotate: 90, opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.18 }}
+              className="flex items-center justify-center"
+            >
+              {open ? <X aria-hidden="true" size={22} /> : <Menu aria-hidden="true" size={22} />}
+            </motion.span>
+          </AnimatePresence>
         </button>
-        <Link to="/" aria-label="Arc Optical Club home" className="order-1 inline-flex shrink-0 items-center lg:order-none" onClick={closeMenus}>
-          <BrandLogo variant={isOverlay ? 'light' : 'color'} className="block h-auto w-[132px] sm:w-36" />
+        <Link
+          to="/"
+          aria-label="Arc Optical Club home"
+          className="order-1 relative inline-flex w-28 shrink-0 items-center min-[375px]:w-32 sm:w-44 lg:order-none"
+          onClick={closeMenus}
+        >
+          <BrandLogo
+            variant="light"
+            className={`block h-auto w-full transition-opacity duration-300 ease-out ${
+              isOverlay ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          />
+          <BrandLogo
+            variant="color"
+            className={`absolute inset-0 block h-auto w-full transition-opacity duration-300 ease-out ${
+              isOverlay ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
+          />
         </Link>
 
         <nav className="hidden items-center gap-7 lg:flex xl:gap-9" aria-label="Main navigation">
@@ -150,47 +178,80 @@ export default function Navbar() {
         </div>
       </div>
 
-      {open && (
-        <nav id="mobile-navigation" aria-label="Mobile navigation" className="absolute inset-x-0 top-full max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain border-t border-slate-100 bg-white pb-4 text-arc-navy shadow-xl lg:hidden">
-          <div className="container-shell">
-            {mobileItems.map((item, index) => {
-              if ('links' in item) {
-                const expanded = mobileGroup === item.label
-                const active = item.links.some(link => link.to === pathname)
+      <AnimatePresence>
+        {open && (
+          <motion.nav
+            id="mobile-navigation"
+            aria-label="Mobile navigation"
+            initial={{ opacity: 0, height: 0, y: -6 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -6 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute inset-x-0 top-full max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain border-t border-slate-100 bg-white pb-5 text-arc-navy shadow-2xl lg:hidden"
+          >
+            <div className="container-shell">
+              {mobileItems.map((item, index) => {
+                if ('links' in item) {
+                  const expanded = mobileGroup === item.label
+                  return (
+                    <div key={item.label} className="border-b border-slate-200/80">
+                      <button
+                        type="button"
+                        aria-expanded={expanded}
+                        aria-controls={`mobile-nav-group-${index}`}
+                        onClick={() => setMobileGroup(expanded ? null : item.label)}
+                        className="flex min-h-14 w-full items-center justify-between py-4 px-3 text-left text-[15px] font-extrabold text-arc-navy transition hover:bg-arc-ice"
+                      >
+                        {item.label}
+                        <ChevronDown
+                          size={15}
+                          className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+                          aria-hidden="true"
+                        />
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {expanded && (
+                          <motion.div
+                            id={`mobile-nav-group-${index}`}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.22, ease: 'easeInOut' }}
+                            className="grid overflow-hidden bg-arc-ice/60 py-1"
+                          >
+                            {item.links.map(link => (
+                              <NavLink
+                                key={link.to}
+                                to={link.to}
+                                onClick={closeMenus}
+                                className={({ isActive }) => `px-7 py-3 text-sm font-semibold transition hover:text-arc-blue ${isActive ? 'text-arc-blue' : 'text-arc-navy/75'}`}
+                              >
+                                {link.label}
+                              </NavLink>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )
+                }
                 return (
                   <div key={item.label} className="border-b border-slate-200/80">
-                    <button
-                      type="button"
-                      aria-expanded={expanded}
-                      aria-controls={`mobile-nav-group-${index}`}
-                      onClick={() => setMobileGroup(expanded ? null : item.label)}
-                      className={`flex min-h-14 w-full items-center justify-between border-l-4 py-4 pl-3 pr-2 text-left text-[15px] font-extrabold transition hover:bg-arc-ice ${active ? 'border-arc-yellow text-arc-blue' : 'border-transparent'}`}
+                    <NavLink
+                      to={item.to}
+                      end
+                      onClick={closeMenus}
+                      className="flex min-h-14 items-center py-4 px-3 text-[15px] font-extrabold text-arc-navy transition hover:bg-arc-ice"
                     >
-                      {item.label}<ChevronDown size={15} className={`transition ${expanded ? 'rotate-180' : ''}`} aria-hidden="true" />
-                    </button>
-                    {expanded && (
-                      <div id={`mobile-nav-group-${index}`} className="grid bg-arc-ice/60 py-1">
-                        {item.links.map(link => (
-                          <NavLink key={link.to} to={link.to} onClick={closeMenus} className={({ isActive }) => `px-7 py-3 text-sm font-semibold transition hover:text-arc-blue ${isActive ? 'text-arc-blue' : 'text-arc-navy/75'}`}>
-                            {link.label}
-                          </NavLink>
-                        ))}
-                      </div>
-                    )}
+                      {item.label}
+                    </NavLink>
                   </div>
                 )
-              }
-              return (
-                <div key={item.label} className="border-b border-slate-200/80">
-                  <NavLink to={item.to} end onClick={closeMenus} className={({ isActive }) => `flex min-h-14 items-center border-l-4 py-4 pl-3 pr-2 text-[15px] font-extrabold transition hover:bg-arc-ice ${isActive ? 'border-arc-yellow bg-arc-yellow/5 text-arc-blue' : 'border-transparent'}`}>
-                    {item.label}
-                  </NavLink>
-                </div>
-              )
-            })}
-          </div>
-        </nav>
-      )}
+              })}
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </header>
   )
 }
