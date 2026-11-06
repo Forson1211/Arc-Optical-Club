@@ -5,9 +5,11 @@ import Container from '../components/Container'
 import { ContentState } from '../components/PageIntro'
 import { contentImage, useContent } from '../lib/content'
 import type { ContentProgram } from '../lib/content'
+import { programs as defaultPrograms } from '../data/programs'
 
 export default function Programs() {
-  const { data: programs, error, retry } = useContent<ContentProgram[]>('/content/programs')
+  const { data } = useContent<ContentProgram[]>('/content/programs')
+  const programs = data && data.length ? data : defaultPrograms
   const [expanded, setExpanded] = useState<string | null>(null)
   return <main className="programs-page inner-page">
     <section className="relative grid min-h-44 place-items-center overflow-hidden px-5 py-12 text-center text-white" aria-labelledby="programs-heading">

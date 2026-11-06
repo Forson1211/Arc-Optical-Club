@@ -40,7 +40,12 @@ export async function flushTraffic() {
     while (queue.length) {
       const batch = queue.slice(0, 20)
       const response = await fetch(endpoint('/activity'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ events: batch }), keepalive: true, signal: AbortSignal.timeout(10000) })
-      if (!response.ok && (response.status === 429 || response.status >= 500)) break
+      if (!response.ok) {
+        if (response.status === 429 || response.status >= 500) break
+        queue = []
+        persist()
+        break
+      }
       const sent = new Set(batch.map(e => e.eventId)); queue = queue.filter(e => !sent.has(e.eventId)); persist()
     }
   } catch { /* Retry on connection recovery or the next timer tick. */ }
