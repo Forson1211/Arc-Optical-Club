@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { ChevronDown, Menu, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
-import BrandLogo from './BrandLogo'
+import BrandLogo, { brandLogoSize } from './BrandLogo'
 
 const groups = [
   { label: 'About Arc', links: [{ label: 'Our story', to: '/about' }, { label: 'Our team', to: '/team' }] },
@@ -80,12 +80,12 @@ export default function Navbar() {
     return () => document.removeEventListener('pointerdown', closeOutside)
   }, [open, activeGroup])
 
-  const navColor = isOverlay ? 'text-white/80 hover:text-white' : 'text-arc-navy/75 hover:text-arc-blue'
+  const navColor = 'text-white/80 hover:text-white'
 
   return (
     <header
       ref={headerRef}
-      className={`z-50 border-b transition-[background-color,border-color,box-shadow,color] duration-300 ${isHome ? 'fixed inset-x-0 top-0' : 'sticky top-0'} ${isOverlay ? 'border-transparent bg-transparent text-white' : 'border-arc-blue/10 bg-white text-arc-navy shadow-[0_2px_16px_rgba(20,43,59,0.06)]'}`}
+      className={`z-50 text-white transition-[background-color,box-shadow,color] duration-300 ${isHome ? 'fixed inset-x-0 top-0' : 'sticky top-0'} ${isOverlay ? 'bg-transparent' : 'bg-arc-deep'} ${scrolled ? 'shadow-[0_2px_6px_-3px_rgba(0,0,0,0.18)]' : 'shadow-none'}`}
       onKeyDown={(event) => {
         if (event.key === 'Escape') {
           const expandedButton = headerRef.current?.querySelector<HTMLButtonElement>('button[aria-expanded="true"]')
@@ -94,7 +94,7 @@ export default function Navbar() {
         }
       }}
     >
-      <div className="container-shell flex h-24 items-center justify-between gap-6 lg:h-28">
+      <div className="container-shell flex h-[88px] items-center justify-between gap-6">
         <button
           type="button"
           className="order-2 grid h-11 w-11 shrink-0 place-items-center rounded-sm bg-arc-yellow text-arc-navy transition hover:bg-[#ffd149] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-arc-blue lg:hidden"
@@ -119,20 +119,12 @@ export default function Navbar() {
         <Link
           to="/"
           aria-label="Arc Optical Club home"
-          className="order-1 relative inline-flex w-28 shrink-0 items-center min-[375px]:w-32 sm:w-44 lg:order-none"
+          className={`order-1 relative inline-flex shrink-0 items-center lg:order-none ${brandLogoSize}`}
           onClick={closeMenus}
         >
           <BrandLogo
             variant="light"
-            className={`block h-auto w-full transition-opacity duration-300 ease-out ${
-              isOverlay ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-          />
-          <BrandLogo
-            variant="color"
-            className={`absolute inset-0 block h-auto w-full transition-opacity duration-300 ease-out ${
-              isOverlay ? 'opacity-0 pointer-events-none' : 'opacity-100'
-            }`}
+            className="block h-auto w-full"
           />
         </Link>
 
@@ -146,15 +138,15 @@ export default function Navbar() {
                   type="button"
                   aria-expanded={expanded}
                   aria-controls={`desktop-nav-group-${index}`}
-                  className={`flex items-center gap-1.5 py-3 text-[15px] font-semibold transition ${active ? (isOverlay ? 'text-arc-yellow' : 'text-arc-blue') : navColor}`}
+                  className={`flex items-center gap-1.5 py-3 text-[15px] font-semibold transition ${active ? 'text-arc-yellow' : navColor}`}
                   onClick={() => setActiveGroup(expanded ? null : group.label)}
                 >
                   {group.label}<ChevronDown size={14} className={`transition ${expanded ? 'rotate-180' : ''}`} aria-hidden="true" />
                 </button>
                 {expanded && (
-                  <div id={`desktop-nav-group-${index}`} className="absolute left-0 top-full grid min-w-48 gap-1 rounded-sm border-t-2 border-arc-yellow bg-white p-2 text-arc-navy shadow-xl">
+                  <div id={`desktop-nav-group-${index}`} className="absolute left-0 top-full grid min-w-48 gap-1 rounded-sm bg-arc-deep p-2 text-white shadow-xl">
                     {group.links.map((link) => (
-                      <NavLink key={link.to} to={link.to} onClick={closeMenus} className={({ isActive }) => `rounded-sm px-4 py-3 text-[14px] font-semibold transition hover:bg-arc-ice hover:text-arc-blue ${isActive ? 'bg-arc-ice text-arc-blue' : ''}`}>
+                      <NavLink key={link.to} to={link.to} onClick={closeMenus} className={({ isActive }) => `rounded-sm px-4 py-3 text-[14px] font-semibold transition hover:bg-white/10 hover:text-arc-yellow ${isActive ? 'bg-white/10 text-arc-yellow' : ''}`}>
                         {link.label}
                       </NavLink>
                     ))}
@@ -164,7 +156,7 @@ export default function Navbar() {
             )
           })}
           {directLinks.map((link) => (
-            <NavLink key={link.to} to={link.to} className={({ isActive }) => `py-3 text-[15px] font-semibold transition ${isActive ? (isOverlay ? 'text-arc-yellow' : 'text-arc-blue') : navColor}`}>
+            <NavLink key={link.to} to={link.to} className={({ isActive }) => `py-3 text-[15px] font-semibold transition ${isActive ? 'text-arc-yellow' : navColor}`}>
               {link.label}
             </NavLink>
           ))}
@@ -187,20 +179,20 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto', y: 0 }}
             exit={{ opacity: 0, height: 0, y: -6 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-x-0 top-full max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain border-t border-slate-100 bg-white pb-5 text-arc-navy shadow-2xl lg:hidden"
+            className="absolute inset-x-0 top-full max-h-[calc(100dvh-88px)] overflow-y-auto overscroll-contain bg-arc-deep pb-5 text-white shadow-2xl lg:hidden"
           >
             <div className="container-shell">
               {mobileItems.map((item, index) => {
                 if ('links' in item) {
                   const expanded = mobileGroup === item.label
                   return (
-                    <div key={item.label} className="border-b border-slate-200/80">
+                    <div key={item.label}>
                       <button
                         type="button"
                         aria-expanded={expanded}
                         aria-controls={`mobile-nav-group-${index}`}
                         onClick={() => setMobileGroup(expanded ? null : item.label)}
-                        className="flex min-h-14 w-full items-center justify-between py-4 px-3 text-left text-[15px] font-extrabold text-arc-navy transition hover:bg-arc-ice"
+                        className="flex min-h-14 w-full items-center justify-between py-4 px-3 text-left text-[15px] font-extrabold text-white transition hover:bg-white/5"
                       >
                         {item.label}
                         <ChevronDown
@@ -217,14 +209,14 @@ export default function Navbar() {
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.22, ease: 'easeInOut' }}
-                            className="grid overflow-hidden bg-arc-ice/60 py-1"
+                            className="grid overflow-hidden bg-black/10 py-1"
                           >
                             {item.links.map(link => (
                               <NavLink
                                 key={link.to}
                                 to={link.to}
                                 onClick={closeMenus}
-                                className={({ isActive }) => `px-7 py-3 text-sm font-semibold transition hover:text-arc-blue ${isActive ? 'text-arc-blue' : 'text-arc-navy/75'}`}
+                                className={({ isActive }) => `px-7 py-3 text-sm font-semibold transition hover:text-arc-yellow ${isActive ? 'text-arc-yellow' : 'text-white/80'}`}
                               >
                                 {link.label}
                               </NavLink>
@@ -236,12 +228,12 @@ export default function Navbar() {
                   )
                 }
                 return (
-                  <div key={item.label} className="border-b border-slate-200/80">
+                  <div key={item.label}>
                     <NavLink
                       to={item.to}
                       end
                       onClick={closeMenus}
-                      className="flex min-h-14 items-center py-4 px-3 text-[15px] font-extrabold text-arc-navy transition hover:bg-arc-ice"
+                      className="flex min-h-14 items-center py-4 px-3 text-[15px] font-extrabold text-white transition hover:bg-white/5"
                     >
                       {item.label}
                     </NavLink>

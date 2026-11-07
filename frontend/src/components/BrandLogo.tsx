@@ -2,6 +2,8 @@ import { optimizedImageSrc } from '../lib/images'
 
 type Props = { className?: string; variant?: 'light' | 'color' | 'white'; alt?: string }
 
+export const brandLogoSize = 'w-28 min-[375px]:w-32 sm:w-44 lg:w-[136px]'
+
 export default function BrandLogo({ className = '', variant = 'light' }: Props) {
   const isColor = variant === 'color'
   const isWhite = variant === 'white'

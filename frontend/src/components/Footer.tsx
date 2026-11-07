@@ -3,7 +3,7 @@ import type { FormEvent, SVGProps } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronDown, Instagram } from 'lucide-react'
 import Container from './Container'
-import BrandLogo from './BrandLogo'
+import BrandLogo, { brandLogoSize } from './BrandLogo'
 import { api } from '../lib/api'
 
 const sections = [
@@ -149,7 +149,7 @@ export default function Footer() {
         {/* Top Branding & Social Media Row (Clean: Logo on left, Social Icons on right) */}
         <div className="flex items-center justify-between gap-3 border-b border-white/15 py-7 sm:py-8">
           <Link to="/" aria-label="Arc Optical Club home" className="inline-flex shrink-0">
-            <BrandLogo className="h-auto w-28 min-[375px]:w-32 sm:w-44" />
+            <BrandLogo className={`h-auto ${brandLogoSize}`} />
           </Link>
 
           <div className="flex shrink-0 items-center gap-1 sm:gap-3" aria-label="Social media links">
