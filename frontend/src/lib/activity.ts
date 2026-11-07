@@ -8,6 +8,8 @@ let fallbackVisitor = '', fallbackSession = '', lastActive = 0
 let queue: SiteEvent[] = []
 try { const saved = JSON.parse(localStorage.getItem(queueKey) || '[]'); if (Array.isArray(saved)) queue = saved.filter(e => e && paths.includes(e.path) && ['page_view', 'click'].includes(e.type)).slice(-200) } catch { /* Storage may be disabled. */ }
 let flushing = false
+let retryAt = 0, retryDelay = 15000
+const deferRetry = () => { retryAt = Date.now() + retryDelay; retryDelay = Math.min(retryDelay * 2, 120000) }
 const endpoint = (path: string) => `${String(api.defaults.baseURL).replace(/\/$/, '')}${path}`
 const persist = () => { try { localStorage.setItem(queueKey, JSON.stringify(queue)) } catch { /* Continue in memory. */ } }
 
@@ -34,21 +36,22 @@ export function trackSite(type: SiteEvent['type'], path: string, extra: Pick<Sit
 }
 
 export async function flushTraffic() {
-  if (flushing || !queue.length || !navigator.onLine) return
+  if (flushing || !queue.length || !navigator.onLine || Date.now() < retryAt) return
   flushing = true
   try {
     while (queue.length) {
       const batch = queue.slice(0, 20)
       const response = await fetch(endpoint('/activity'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ events: batch }), keepalive: true, signal: AbortSignal.timeout(10000) })
       if (!response.ok) {
-        if (response.status === 429 || response.status >= 500) break
+        if (response.status === 429 || response.status >= 500) { deferRetry(); break }
         queue = []
         persist()
         break
       }
+      retryAt = 0; retryDelay = 15000
       const sent = new Set(batch.map(e => e.eventId)); queue = queue.filter(e => !sent.has(e.eventId)); persist()
     }
-  } catch { /* Retry on connection recovery or the next timer tick. */ }
+  } catch { deferRetry() }
   finally { flushing = false }
 }
 

@@ -123,8 +123,21 @@ Password changes require the current password and at least 12 characters for the
 
 ## Vercel and social sharing
 
-Import this repository into Vercel with the repository root as the Root Directory. The root `vercel.json` builds the frontend and supports direct links to React routes.
+Import this repository into Vercel with the repository root as the Root Directory. The root `vercel.json` builds both apps, includes the compiled backend in `api/index.mjs`, forwards `/api/*` to Express and supports direct links to React pages. The `.mjs` entry preserves native ES modules when importing the backend.
+
+The deployment sets `NODEJS_HELPERS=0` so Express parses request bodies itself, preserving raw uploaded images and Paystack webhook signatures. See [Vercel's Node.js configuration](https://vercel.com/docs/functions/runtimes/node-js/advanced-node-configuration#disabling-helpers-for-nodejs).
+
+Set these variables in **Vercel Project Settings → Environment Variables → Production**, then redeploy (a local `backend/.env` is not uploaded):
+
+- `MONGODB_URI`: your existing production MongoDB/Atlas connection string, including the database name. Use the same database that contains your existing records and administrator accounts.
+- `CLIENT_URL`: `https://arcoptical.org` (add `https://www.arcoptical.org` or a Vercel domain only if you use them, separated by commas).
+- `NODE_ENV`: `production`.
+- Leave `VITE_API_URL` unset for this combined deployment; the frontend uses same-origin `/api`.
+- `ADMIN_EMAIL` and `ADMIN_PASSWORD`: optional initial account creation, only when the production database has no administrators. Existing local accounts do not automatically migrate to a different database.
+- Paystack server secrets, when enabling online donations, as described above.
+
+Ensure the MongoDB database user has read/write and index-creation permissions, and Atlas network access permits connections from your hosting environment. Open `/api/health` after redeploying; it must return JSON with `success: true` and `storage: "mongodb"`. Then test `/api/content/programs` and admin sign-in. A `503` with `API_CONFIGURATION_REQUIRED` means an environment variable is missing; `API_STARTUP_FAILED` means startup failed (inspect Vercel Function Logs for the error name and check Atlas connectivity/permissions). Failed startup is retryable and never falls back to temporary files or an empty database.
 
 The sharing tags in `frontend/index.html` use `https://arcoptical.vercel.app` and the 1200 × 630 white-background logo image at `frontend/public/images/arc-social-preview.png`. Update the absolute URLs in those tags if the public domain changes. Social previews become available once the site is deployed publicly; social platforms may cache earlier previews.
 
-The Express backend needs its own deployment and MongoDB configuration. Set `NODE_ENV=production`, `MONGODB_URI` and `CLIENT_URL=https://arcoptical.vercel.app` on the backend. Set `VITE_API_URL` in Vercel to the HTTPS backend URL ending in `/api`. If the frontend and API use different sites, set `COOKIE_SAME_SITE=none`; cookies then require HTTPS, and browser policies may still restrict third-party cookies. Prefer hosting the API on the same site or proxying `/api`. Use `TRUST_PROXY=1` only behind one trusted reverse proxy. `CLIENT_URL` supports a comma-separated list of exact allowed origins.
+For an optional separately hosted Express backend instead, set `NODE_ENV=production`, `MONGODB_URI` and your actual `CLIENT_URL` on that service, and set `VITE_API_URL` in Vercel to its HTTPS URL ending in `/api`. If the frontend and API use different sites, set `COOKIE_SAME_SITE=none`; cookies then require HTTPS, and browser policies may still restrict third-party cookies. Prefer the same-origin deployment above. Use `TRUST_PROXY=1` only behind one trusted reverse proxy. `CLIENT_URL` supports a comma-separated list of exact allowed origins.
