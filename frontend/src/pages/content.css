@@ -235,5 +235,5 @@
 
 /* Compact reading rhythm throughout the public site, without changing its shapes. */
 .site-typography :is(p, li, figcaption) { line-height: 1.5; letter-spacing: normal; }
-.site-typography .eyebrow { letter-spacing: .1em; }
+.site-typography .eyebrow { letter-spacing: normal; }
 .site-typography .article-category { letter-spacing: .06em; }

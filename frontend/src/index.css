@@ -49,12 +49,28 @@ button, input, textarea, select { font: inherit; }
 
 @layer components {
   .container-shell { @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10; }
-  .eyebrow { @apply text-xs sm:text-sm font-extrabold uppercase tracking-[0.2em] text-arc-blue; }
+  .eyebrow { @apply text-xs sm:text-sm font-extrabold uppercase tracking-normal text-arc-blue; }
   .section-title { @apply text-3xl font-extrabold leading-tight tracking-[-0.045em] text-arc-navy sm:text-4xl lg:text-5xl; }
   .btn-primary { @apply inline-flex items-center justify-center rounded-full bg-arc-blue px-7 py-4 text-base font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#01598f] focus:outline-none focus:ring-4 focus:ring-arc-blue/20; }
   .btn-secondary { @apply inline-flex items-center justify-center rounded-full bg-arc-yellow px-7 py-4 text-base font-extrabold text-arc-navy transition hover:-translate-y-0.5 hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-arc-yellow/30; }
   .hero-button { @apply inline-flex min-h-[54px] items-center justify-center gap-5 rounded-sm px-8 py-4 text-xs sm:text-sm font-extrabold uppercase tracking-[0.06em] transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-arc-yellow; }
 }
+
+.why-arc-card { perspective: 1000px; }
+.why-arc-card-inner {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 550ms cubic-bezier(.2, .65, .3, 1);
+}
+.why-arc-card[data-flipped="true"] .why-arc-card-inner { transform: rotateY(180deg); }
+.why-arc-card-face {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.why-arc-card-back { transform: rotateY(180deg); }
 
 .home-hero {
   position: relative;

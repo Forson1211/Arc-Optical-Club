@@ -91,8 +91,7 @@ export default function Join() {
             Join Us Now!
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-white/90 sm:text-[15px]">
-            Lend your heart, share your skills, and help someone see a brighter future. Fill in your registration details
-            below to get started.
+            Whether you study eye care, work in it, or simply care about sight, there is a place for you. Tell us about yourself and we will get back to you.
           </p>
         </Container>
       </section>

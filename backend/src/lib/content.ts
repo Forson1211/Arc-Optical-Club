@@ -8,6 +8,13 @@ export const imageSource = z.string().trim().max(2048).refine(value => {
 }, 'Upload an image, use an existing /images/ path, or enter an HTTPS image URL.')
 
 const status = z.enum(['draft', 'published'])
+export const teamProfileSchema = z.object({
+  title: z.string().trim().min(2).max(120), role: z.string().trim().min(2).max(160),
+  category: z.enum(['Core Team', 'Team Leads', 'Operations', 'Advisory Council']),
+  image: z.union([z.literal(''), imageSource]).default(''), alt: z.string().trim().max(240).default(''),
+  status, order: z.number().int().min(0).max(999),
+}).refine(value => !value.image || value.alt.length >= 3, { message: 'Describe the uploaded photo.', path: ['alt'] })
+
 export const programContentSchema = z.object({
   title: z.string().trim().min(2).max(120), category: z.string().trim().min(2).max(80),
   description: z.string().trim().min(10).max(300), detail: z.string().trim().min(20).max(6000),

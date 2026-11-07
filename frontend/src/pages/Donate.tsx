@@ -25,8 +25,8 @@ export default function Donate() {
     <section className="giving-feature" aria-labelledby="giving-feature-heading">
       <SiteImage src="/images/arc-eye-screening-hero.png" alt="An Arc volunteer providing an eye screening in the community"/>
       <div><HandHeart size={34} className="text-arc-yellow"/><h2 id="giving-feature-heading">A little support.<br/>A clearer tomorrow.</h2>
-      <p>Support a screening, contribute supplies or partner with a program. Every conversation is a place to start.</p>
-      <Link className="page-button" to="/contact?subject=Donation%20enquiry">Talk to us about giving<ArrowUpRight size={18}/></Link>
+      <p>Support a screening, contribute supplies, partner with us or sponsor a program. Help more children, elders and communities access free eye care.</p>
+      <Link className="page-button" to="/contact?subject=Partnership%20or%20sponsorship">Partner or sponsor us<ArrowUpRight size={18}/></Link>
       <small>Contact our team to arrange a contribution and receive payment details.</small></div>
     </section>
     <section className="donation-checkout" id="donation-form" aria-labelledby="donation-checkout-heading"><h2 id="donation-checkout-heading">Make a donation.</h2><p>Choose your amount and give securely through Paystack.</p></section>

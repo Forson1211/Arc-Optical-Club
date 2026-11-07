@@ -38,7 +38,7 @@ export function Pillars() {
       letter: 'C',
       title: 'Community',
       icon: Users,
-      text: 'Professional development, mentorship, scholarships, volunteering and partnerships.',
+      text: 'Professional development, mentorship, scholarships, volunteering, partners and donors.',
     },
   ]
 
@@ -94,9 +94,9 @@ export function Pillars() {
                       <h3 className="mt-2 text-base font-extrabold text-arc-navy sm:mt-3 sm:text-xl md:text-2xl">{title}</h3>
                     </div>
 
-                    <div className="flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-[11px] sm:px-3.5 sm:py-1.5 sm:text-xs font-bold uppercase tracking-wider text-arc-slate transition group-hover:bg-arc-blue/10 group-hover:text-arc-blue">
-                      <RotateCw size={12} className="transition-transform duration-500 group-hover:rotate-180" />
-                      <span>Click to view details</span>
+                    <div className="flex items-center gap-1.5 text-[11px] font-semibold text-arc-slate">
+                      <RotateCw size={14} aria-hidden="true" />
+                      <span>View details</span>
                     </div>
                   </div>
 
@@ -149,7 +149,7 @@ export function EventFeature() {
         <div className="sight-feature-copy">
           <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-arc-yellow">Coming soon</p>
           <h2 id="sight-feature-heading" className="mt-5 text-4xl font-extrabold leading-tight tracking-[-0.05em] sm:text-5xl">Sight For Kids.</h2>
-          <p className="mt-5 text-base leading-8 text-white/90">Eye education and free screening for school children. Our first project reached nearly 150 teachers and pupils at Offinso-Abofo. A new edition is coming. Watch out!</p>
+          <p className="mt-5 text-base leading-8 text-white/90">Eye education and free screening for school children. On 25 November 2022, our first project in Offinso-Abofo reached nearly 150 teachers and pupils; about 98% had never had an eye exam. A new edition is coming. Watch out!</p>
           <Link to="/programs" className="mt-8 inline-flex items-center gap-2 rounded-full bg-arc-yellow px-6 py-3.5 text-sm font-extrabold text-arc-navy">Explore the initiative <ArrowUpRight size={17} /></Link>
         </div>
       </Container>
@@ -158,34 +158,31 @@ export function EventFeature() {
 }
 
 export function WhyArc() {
+  const [flipped, setFlipped] = useState<Record<string, boolean>>({})
   const reasons = [
     {
       title: 'Proven Community Impact',
       description: 'Since 2022, we have screened more than 850 people, helping children, families and communities take the first step towards clearer, healthier sight.',
       color: 'bg-arc-blue',
       icon: Handshake,
-      to: '/about',
     },
     {
       title: 'Care Close to Home',
       description: 'From school visits to community outreaches, we bring free eye screenings and practical eye-health education closer to people across Ghana.',
       color: 'bg-[#00A981]',
       icon: HeartHandshake,
-      to: '/programs',
     },
     {
       title: 'Research Into Action',
       description: 'Our Journal Club, research and shared learning connect curious minds with the knowledge to better understand eye health and inform community care.',
       color: 'bg-[#EF6856]',
       icon: BookOpenCheck,
-      to: '/research',
     },
     {
       title: 'Stronger Together',
       description: 'Students, professionals and volunteers come together through mentorship, learning and service, united by one purpose: making quality eye care more accessible.',
       color: 'bg-[#E8A619]',
       icon: UsersRound,
-      to: '/join',
     },
   ]
 
@@ -200,25 +197,41 @@ export function WhyArc() {
         </div>
 
         <div className="mt-10 grid gap-5 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4">
-          {reasons.map(({ title, description, color, icon: Icon, to }, index) => (
-            <Link
-              key={title}
-              to={to}
-              aria-labelledby={`why-arc-card-${index}`}
-              className="group flex flex-col items-center rounded-sm border border-slate-100 bg-white px-6 pb-9 pt-10 text-center shadow-[0_2px_18px_rgba(20,43,59,0.06)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(20,43,59,0.1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-arc-blue lg:min-h-[346px] lg:px-5"
-            >
-              <span className={`relative grid h-[104px] w-[104px] shrink-0 place-items-center rounded-full text-white ${color}`} aria-hidden="true">
-                {index === 0 ? (
-                  <>
-                    <ShieldCheck size={30} strokeWidth={1.8} className="absolute left-1/2 top-4 -translate-x-1/2" />
-                    <Handshake size={48} strokeWidth={1.8} className="absolute bottom-4 left-1/2 -translate-x-1/2" />
-                  </>
-                ) : <Icon size={50} strokeWidth={1.65} />}
-              </span>
-              <h3 id={`why-arc-card-${index}`} className="mt-6 text-[16px] font-extrabold leading-6 text-arc-navy transition group-hover:text-arc-blue">{title}</h3>
-              <p className="mt-4 max-w-[26rem] text-[14px] leading-6 text-arc-slate">{description}</p>
-            </Link>
-          ))}
+          {reasons.map(({ title, description, color, icon: Icon }, index) => {
+            const isFlipped = !!flipped[title]
+            return (
+              <button
+                key={title}
+                type="button"
+                data-flipped={isFlipped}
+                aria-pressed={isFlipped}
+                aria-label={`${title}. ${isFlipped ? 'Show icon and title' : 'View explanation'}.`}
+                aria-describedby={isFlipped ? `why-arc-description-${index}` : undefined}
+                onClick={() => setFlipped(previous => ({ ...previous, [title]: !previous[title] }))}
+                className="why-arc-card group w-full rounded-sm text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-arc-yellow"
+              >
+                <span className="why-arc-card-inner">
+                  <span aria-hidden={isFlipped} className="why-arc-card-face flex min-h-[320px] flex-col items-center justify-center rounded-sm border border-slate-100 bg-white px-6 py-8 shadow-[0_2px_18px_rgba(20,43,59,0.06)] lg:min-h-[346px] lg:px-5">
+                    <span className={`relative grid h-[104px] w-[104px] shrink-0 place-items-center rounded-full text-white ${color}`} aria-hidden="true">
+                      {index === 0 ? (
+                        <>
+                          <ShieldCheck size={30} strokeWidth={1.8} className="absolute left-1/2 top-4 -translate-x-1/2" />
+                          <Handshake size={48} strokeWidth={1.8} className="absolute bottom-4 left-1/2 -translate-x-1/2" />
+                        </>
+                      ) : <Icon size={50} strokeWidth={1.65} />}
+                    </span>
+                    <span className="mt-6 block text-[16px] font-extrabold leading-6 text-arc-navy">{title}</span>
+                    <span className="mt-5 flex items-center gap-1.5 text-[11px] font-semibold text-arc-slate"><RotateCw size={14} aria-hidden="true" />View details</span>
+                  </span>
+                  <span aria-hidden={!isFlipped} className="why-arc-card-face why-arc-card-back flex min-h-[320px] flex-col items-center justify-center rounded-sm border border-slate-100 bg-white px-6 py-8 shadow-[0_2px_18px_rgba(20,43,59,0.06)] lg:min-h-[346px] lg:px-5">
+                    <span className="block text-[16px] font-extrabold leading-6 text-arc-navy">{title}</span>
+                    <span id={`why-arc-description-${index}`} className="mt-4 block max-w-[26rem] text-[14px] leading-6 text-arc-slate">{description}</span>
+                    <span className="mt-5 flex items-center gap-1.5 text-[11px] font-semibold text-arc-slate"><RotateCw size={14} aria-hidden="true" />Back to icon</span>
+                  </span>
+                </span>
+              </button>
+            )
+          })}
         </div>
       </Container>
     </section>

@@ -3,9 +3,10 @@ import { randomUUID } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import mongoose from 'mongoose'
-import { initialPrograms } from '../data/programs.js'
+import { initialPrograms, legacyProgramDetails } from '../data/programs.js'
+import { initialTeam } from '../data/team.js'
 
-export const collections = ['outreaches', 'volunteers', 'donations', 'contactmessages', 'newslettersubscribers', 'adminusers', 'adminsessions', 'auditlogs', 'siteevents', 'programs', 'news', 'contentimages', 'paymentattempts'] as const
+export const collections = ['outreaches', 'volunteers', 'donations', 'contactmessages', 'newslettersubscribers', 'adminusers', 'adminsessions', 'auditlogs', 'siteevents', 'programs', 'news', 'contentimages', 'paymentattempts', 'teammembers'] as const
 export type Collection = typeof collections[number]
 export type RecordData = { id: string; createdAt: string; updatedAt: string; [key: string]: unknown }
 type LocalDatabase = Record<Collection, RecordData[]>
@@ -32,9 +33,11 @@ export async function initializeStorage() {
     await mongoose.connection.collection('auditlogs').createIndex({ createdAt: -1 })
     await mongoose.connection.collection('auditlogs').createIndex({ category: 1, createdAt: -1 })
     await mongoose.connection.collection('programs').createIndex({ initialKey: 1 }, { unique: true, sparse: true })
+    await mongoose.connection.collection('teammembers').createIndex({ initialKey: 1 }, { unique: true, sparse: true })
     await mongoose.connection.collection('paymentattempts').createIndex({ reference: 1 }, { unique: true })
     await mongoose.connection.collection('donations').createIndex({ paymentReference: 1 }, { unique: true, sparse: true })
     await seedPrograms()
+    await seedTeam()
     return
   }
   if (process.env.NODE_ENV === 'production') throw new Error('MongoDB is required in production. Set MONGODB_URI before starting the API.')
@@ -45,7 +48,7 @@ export async function initializeStorage() {
   try {
     const stored = JSON.parse(await readFile(databaseFile, 'utf8'))
     // Upgrade existing local workspaces without replacing their records.
-    for (const name of ['auditlogs', 'siteevents', 'programs', 'news', 'contentimages', 'paymentattempts']) if (stored[name] === undefined) stored[name] = []
+    for (const name of ['auditlogs', 'siteevents', 'programs', 'news', 'contentimages', 'paymentattempts', 'teammembers']) if (stored[name] === undefined) stored[name] = []
     if (!collections.every(name => Array.isArray(stored[name]))) throw new Error('Invalid local database format. Restore it from a backup before restarting.')
     localData = stored
   } catch (error) {
@@ -54,13 +57,35 @@ export async function initializeStorage() {
     await persist(localData)
   }
   await seedPrograms()
+  await seedTeam()
 }
 
 async function seedPrograms() {
   for (const [order, program] of initialPrograms.entries()) {
     const initialKey = `initial-${order}`
-    if (await findRecord('programs', 'initialKey', initialKey)) continue
+    const existing = await findRecord('programs', 'initialKey', initialKey)
+    if (existing) {
+      if (existing.title === program.title && legacyProgramDetails[order].includes(String(existing.detail))) {
+        const changes = { detail: program.detail, updatedAt: new Date().toISOString() }
+        if (mode === 'mongodb') {
+          await mongoose.connection.collection('programs').updateOne({ id: existing.id, title: program.title, detail: existing.detail }, { $set: changes })
+        } else await mutate(draft => {
+          const record = draft.programs.find(item => item.id === existing.id && item.title === program.title && item.detail === existing.detail)
+          if (record) Object.assign(record, changes)
+        })
+      }
+      continue
+    }
     try { await insertRecord('programs', { ...program, initialKey, order, status: 'published' }, ['initialKey']) }
+    catch (error) { if (!(error instanceof HttpError) || error.status !== 409) throw error }
+  }
+}
+
+async function seedTeam() {
+  for (const [index, member] of initialTeam.entries()) {
+    const initialKey = `concept-team-${index}`
+    if (await findRecord('teammembers', 'initialKey', initialKey)) continue
+    try { await insertRecord('teammembers', { ...member, initialKey }, ['initialKey']) }
     catch (error) { if (!(error instanceof HttpError) || error.status !== 409) throw error }
   }
 }

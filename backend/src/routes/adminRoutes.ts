@@ -7,7 +7,7 @@ import { getAnalytics } from '../lib/analytics.js'
 import { donationSchema, email, outreachSchema, volunteerSchema } from '../lib/validation.js'
 import { findRecord, HttpError, insertRecord, listRecords, storageMode, updateRecord } from '../lib/store.js'
 import type { Collection, RecordData } from '../lib/store.js'
-import { newsSchema, programContentSchema } from '../lib/content.js'
+import { newsSchema, programContentSchema, teamProfileSchema } from '../lib/content.js'
 
 const publicAdmin = (user: RecordData) => ({ id: user.id, name: String(user.name || ''), email: String(user.email), createdAt: user.createdAt, lastLoginAt: user.lastLoginAt || null })
 
@@ -44,7 +44,7 @@ export function adminRoutes(allowedOrigins: string[]) {
       res.status(201).json({ success: true, data: { id: record.id, src: `/api/content/images/${record.id}` } })
     } catch (error) { next(error) }
   })
-  for (const name of ['news', 'programs'] as const) router.get(`/${name}`, async (_req, res, next) => {
+  for (const name of ['news', 'programs', 'teammembers'] as const) router.get(`/${name === 'teammembers' ? 'team' : name}`, async (_req, res, next) => {
     try { res.json({ success: true, data: await listRecords(name) }) } catch (error) { next(error) }
   })
   router.get('/session', (_req, res) => { res.json({ success: true, data: res.locals.admin }) })
@@ -114,15 +114,17 @@ export function adminRoutes(allowedOrigins: string[]) {
       res.json({ success: true, data: { outreaches, volunteers, donations, messages, subscribers }, storage: storageMode() })
     } catch (error) { next(error) }
   })
-  const resources: { name: Collection; schema: z.ZodTypeAny; uniqueKeys: string[] }[] = [
+  const resources: { name: Collection; path?: string; schema: z.ZodTypeAny; uniqueKeys: string[] }[] = [
     { name: 'outreaches', schema: outreachSchema, uniqueKeys: [] },
     { name: 'volunteers', schema: volunteerSchema, uniqueKeys: ['email'] },
     { name: 'donations', schema: donationSchema, uniqueKeys: [] },
     { name: 'programs', schema: programContentSchema, uniqueKeys: [] },
     { name: 'news', schema: newsSchema, uniqueKeys: [] },
+    { name: 'teammembers', path: 'team', schema: teamProfileSchema, uniqueKeys: [] },
   ]
   for (const resource of resources) {
-    router.post(`/${resource.name}`, async (req, res, next) => {
+    const route = resource.path || resource.name
+    router.post(`/${route}`, async (req, res, next) => {
       try {
         const parsed = resource.schema.safeParse(req.body)
         if (!parsed.success) { res.status(400).json({ success: false, message: parsed.error.issues[0]?.message || 'Please check the form fields.', errors: parsed.error.flatten() }); return }
@@ -130,7 +132,7 @@ export function adminRoutes(allowedOrigins: string[]) {
         res.status(201).json({ success: true, data: record })
       } catch (error) { next(error) }
     })
-    router.patch(`/${resource.name}/:id`, async (req, res, next) => {
+    router.patch(`/${route}/:id`, async (req, res, next) => {
       try {
         if (resource.name === 'donations' && (await findRecord('donations', 'id', String(req.params.id)))?.source === 'paystack') throw new HttpError(409, 'Verified Paystack records cannot be edited. Manage refunds through Paystack.')
         const parsed = resource.schema.safeParse(req.body)

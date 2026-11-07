@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom'
 import Container from '../components/Container'
 
 const values = [
-  { title: 'Our Vision', icon: Eye, text: 'A future where everyone can see clearly and access the eye care they need, wherever they live.' },
-  { title: 'Our Mission', icon: Heart, text: 'To bring free eye screenings, eye-health education and research closer to underserved communities in Ghana.' },
+  { title: 'Our Vision', icon: Eye, text: 'A Ghana where no one loses sight to a problem that could have been found early, treated or prevented.' },
+  { title: 'Our Mission', icon: Heart, text: 'To bring quality eye care and eye-health knowledge within reach of every community in Ghana, through free screenings, education, research and a family of passionate students and professionals.' },
   { title: 'Our Aim', icon: HandHeart, text: 'To unite students, professionals and volunteers in practical action for healthier eyes and stronger communities.' },
 ]
 
@@ -37,10 +37,12 @@ export default function OurStory() {
       <Container className="max-w-[920px] pt-14 sm:pt-16">
         <h2 className="text-center text-3xl font-extrabold tracking-[-0.035em] text-white sm:text-4xl">About Arc Optical Club</h2>
         <div className="mt-5 grid gap-3 text-justify text-sm leading-[1.5] text-white/75 sm:text-[15px]">
-          <p>Arc Optical Club is a registered NGO in Ghana, founded in October 2022. We bring together students and professionals from within and beyond the eye-care space, united by the belief that everyone deserves to see clearly.</p>
+          <p>Arc Optical Club is a registered NGO in Ghana, founded in October 2022. We bring together students and professionals across the world, in and outside the eye-care space, united by the belief that everyone deserves to see clearly.</p>
           <p>Our work is built on three pillars: Access, Research & Education, and Community. Through free screenings, eye-health education and research, we help bring eye care and practical knowledge closer to the people who need them.</p>
           <p>Since our beginnings, we have screened more than 850 people. Our initiatives include Sight For Kids, Operation Sight For All and Myopia Rescue, connecting community outreach with learning, awareness and support.</p>
-          <p>Alongside our outreach, we create opportunities for mentorship, professional development and shared learning. From our Journal Club to ARC Academy, we encourage curious minds and caring people to grow together and turn knowledge into service.</p>
+          <p>Our name comes from the arc at the front of the eye, seen in corneal topography and OCT scans, where light first enters and clear vision begins. We aim to be the first step towards clear sight for every community we reach.</p>
+        <p>Our teams cover Collaborative Care &amp; Public Health, Digital Communications &amp; Design, Events &amp; Mobilization, Research &amp; Development, Organizational Development, Partnerships &amp; Stakeholder Engagement, and Grants &amp; Donor Relations.</p>
+          <p>Our partners include Pilmart Pharmacy and Clinic, the Optometry Students Association of Ghana, and the University of Cape Coast.</p>
         </div>
       </Container>
     </main>
