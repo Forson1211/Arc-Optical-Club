@@ -142,6 +142,8 @@ Search and sharing metadata use `https://arcoptical.org`, configured in `fronten
 
 See [the launch checklist](docs/LAUNCH-CHECKLIST.md) for remaining production checks, Search Console setup and current limitations. The frontend build must run before the SEO integration test because that test exercises the built news renderer.
 
+The frontend build runner sets `NODE_ENV=production` before loading Vite for both browser and server rendering builds. This prevents hosting-level development settings from mixing development JSX calls with React's production runtime. Keep the Vercel `NODE_ENV` variable set to `production` for the backend as well. Node 22 is selected by the repository's `engines` setting.
+
 For an optional separately hosted Express backend instead, set `NODE_ENV=production`, `MONGODB_URI` and your actual `CLIENT_URL` on that service, and set `VITE_API_URL` in Vercel to its HTTPS URL ending in `/api`. If the frontend and API use different sites, set `COOKIE_SAME_SITE=none`; cookies then require HTTPS, and browser policies may still restrict third-party cookies. Prefer the same-origin deployment above. Use `TRUST_PROXY=1` only behind one trusted reverse proxy. `CLIENT_URL` supports a comma-separated list of exact allowed origins.
 
 ## Concept document content and team photos
