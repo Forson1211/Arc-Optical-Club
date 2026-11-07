@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { api, apiErrorMessage } from './api'
 
 export type ContentProgram = { id: string; title: string; category: string; description: string; detail: string; image: string; alt: string; order: number; status: 'draft' | 'published' }
+export type TeamProfile = { id: string; title: string; role: string; category: string; image: string; alt: string; order: number; status: 'draft' | 'published' }
 export type ArticleBlock = { type: 'paragraph' | 'heading'; text: string } | { type: 'image'; src: string; alt: string; caption: string }
 export type NewsArticle = { id: string; title: string; excerpt: string; author: string; category: string; image: string; alt: string; publishedAt: string; status: 'draft' | 'published'; blocks: ArticleBlock[] }
 
