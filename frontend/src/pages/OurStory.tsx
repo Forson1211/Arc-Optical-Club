@@ -41,7 +41,7 @@ export default function OurStory() {
           <p>Our work is built on three pillars: Access, Research & Education, and Community. Through free screenings, eye-health education and research, we help bring eye care and practical knowledge closer to the people who need them.</p>
           <p>Since our beginnings, we have screened more than 850 people. Our initiatives include Sight For Kids, Operation Sight For All and Myopia Rescue, connecting community outreach with learning, awareness and support.</p>
           <p>Our name comes from the arc at the front of the eye, seen in corneal topography and OCT scans, where light first enters and clear vision begins. We aim to be the first step towards clear sight for every community we reach.</p>
-        <p>Our teams cover Collaborative Care &amp; Public Health, Digital Communications &amp; Design, Events &amp; Mobilization, Research &amp; Development, Organizational Development, Partnerships &amp; Stakeholder Engagement, and Grants &amp; Donor Relations.</p>
+          <p>Our teams cover Collaborative Care &amp; Public Health, Digital Communications &amp; Design, Events &amp; Mobilization, Research &amp; Development, Organizational Development, Partnerships &amp; Stakeholder Engagement, and Grants &amp; Donor Relations.</p>
           <p>Our partners include Pilmart Pharmacy and Clinic, the Optometry Students Association of Ghana, and the University of Cape Coast.</p>
         </div>
       </Container>

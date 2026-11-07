@@ -24,7 +24,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [activeGroup, setActiveGroup] = useState<string | null>(null)
   const [mobileGroup, setMobileGroup] = useState<string | null>(null)
-  const [scrolled, setScrolled] = useState(() => window.scrollY > 40)
+  const [scrolled, setScrolled] = useState(() => typeof window !== 'undefined' && window.scrollY > 40)
   const headerRef = useRef<HTMLElement>(null)
   const { pathname } = useLocation()
   const isHome = pathname === '/'

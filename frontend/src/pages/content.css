@@ -22,13 +22,15 @@
 .gallery-lightbox > div { display: flex; align-items: center; justify-content: center; gap: 35px; margin-top: 10px; }
 .gallery-lightbox button { display: grid; place-items: center; min-width: 44px; min-height: 44px; }
 .lightbox-close { position: absolute; right: 10px; top: 4px; }
-.learning-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 65px; align-items: center; }
-.learning-photo { width: 100%; height: 450px; object-fit: cover; }
-.learning-options { display: grid; gap: 35px; }
-.learning-options section + section { border-top: 1px solid #ffffff22; padding-top: 30px; }
+.learning-banner > img { object-position: 50% 18%; }
+.learning-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; }
+.learning-options > section { display: flex; flex-direction: column; align-items: start; background: white; color: #142B3B; padding: 30px; }
+.learning-options > section > svg { color: #026AAB; }
 .learning-options h2, .giving-options h2 { font-size: 1.25rem; font-weight: 800; margin-top: 17px; letter-spacing: -.025em; }
-.learning-options p, .quiet-callout p, .giving-feature p, .giving-options p { color: #ffffffb8; font-size: .85rem; line-height: 1.85; margin-top: 12px; max-width: 430px; }
-.learning-options .text-link { margin-top: 12px; }
+.quiet-callout p, .giving-feature p, .giving-options p { color: #ffffffb8; font-size: .85rem; line-height: 1.85; margin-top: 12px; max-width: 430px; }
+.learning-options p { color: #64748B; font-size: .875rem; line-height: 1.5; margin-block: 12px 14px; max-width: 430px; }
+.learning-options .text-link { color: #026AAB; margin-top: auto; }
+.learning-page .quiet-callout { margin-top: 42px; padding-top: 30px; }
 .quiet-callout { border-top: 1px solid #ffffff25; padding-top: 40px; margin-top: 65px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
 .quiet-callout h2 { font-size: 1.4rem; font-weight: 800; letter-spacing: -.035em; }
 .giving-feature { display: grid; grid-template-columns: 1fr 1fr; background: #0d3142; }
@@ -106,16 +108,14 @@
   .news-article { padding: 25px; }
   .news-signup { padding: 22px; }
   .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .learning-layout { gap: 30px; }
   .giving-feature > div { padding: 30px; }
 }
 @media (max-width: 767px) {
   .page-intro { padding-top: 45px; padding-bottom: 38px; }
   .inner-page { padding-bottom: 60px; }
   .photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .learning-layout, .giving-feature, .program-list article { grid-template-columns: 1fr; }
-  .learning-photo { height: 330px; }
-  .learning-options { padding-top: 5px; }
+  .learning-options, .giving-feature, .program-list article { grid-template-columns: 1fr; }
+  .learning-options > section { padding: 25px; }
   .giving-feature > img { min-height: 0; height: 310px; }
   .giving-options { grid-template-columns: 1fr; gap: 28px; }
   .giving-options > a { position: relative; }
@@ -214,9 +214,9 @@
   .donation-layout { grid-template-columns: minmax(0, 1fr); gap: 25px; }
   .donation-form, .donation-purpose { padding: 25px; }
   .program-row { padding: 23px; }
-  .program-row-main { grid-template-columns: 50px minmax(0, 1fr); }
-  .program-row-main > img { grid-row: auto; height: 185px; }
-  .program-number { grid-row: auto; }
+  .program-row-main { grid-template-columns: minmax(0, 1fr); }
+  .program-row-main > img { grid-row: auto; height: auto; aspect-ratio: 3/2; }
+  .program-number { display: none; }
   .program-summary { grid-column: 1/-1; margin-top: 5px; }
   .program-row-main > button { grid-column: 1/-1; }
   .program-row-detail { padding-left: 0; }

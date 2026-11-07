@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { ContentContext } from './content-context'
 import { api, apiErrorMessage } from './api'
 
 export type ContentProgram = { id: string; title: string; category: string; description: string; detail: string; image: string; alt: string; order: number; status: 'draft' | 'published' }
-export type TeamProfile = { id: string; title: string; role: string; category: string; image: string; alt: string; order: number; status: 'draft' | 'published' }
+export type TeamProfile = { id: string; title: string; role: string; category: 'Core Team' | 'Team Leads' | 'Operations' | 'Advisory Council'; image: string; alt: string; order: number; status: 'draft' | 'published' }
 export type ArticleBlock = { type: 'paragraph' | 'heading'; text: string } | { type: 'image'; src: string; alt: string; caption: string }
-export type NewsArticle = { id: string; title: string; excerpt: string; author: string; category: string; image: string; alt: string; publishedAt: string; status: 'draft' | 'published'; blocks: ArticleBlock[] }
+export type NewsArticle = { id: string; title: string; excerpt: string; author: string; category: string; image: string; alt: string; publishedAt: string; updatedAt?: string; status: 'draft' | 'published'; blocks: ArticleBlock[] }
 
 // Uploaded images belong to the API origin, including when it is hosted separately.
 export function contentImage(src: string) {
@@ -14,7 +15,8 @@ export function contentImage(src: string) {
 export const articleDate = (value: string) => new Date(value).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Africa/Accra' })
 
 export function useContent<T>(path: string) {
-  const [data, setData] = useState<T | null>(null), [error, setError] = useState(''), [version, setVersion] = useState(0)
+  const initial = useContext(ContentContext)
+  const [data, setData] = useState<T | null>(() => initial[path] as T ?? null), [error, setError] = useState(''), [version, setVersion] = useState(0)
   const lastPath = useRef(path)
   useEffect(() => {
     const controller = new AbortController()
@@ -30,5 +32,5 @@ export function useContent<T>(path: string) {
     window.addEventListener('focus', refresh)
     return () => window.removeEventListener('focus', refresh)
   }, [])
-  return { data, error, retry: () => setVersion(v => v + 1) }
+  return { data: lastPath.current === path ? data : null, error, retry: () => setVersion(v => v + 1) }
 }

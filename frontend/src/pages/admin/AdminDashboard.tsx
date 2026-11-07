@@ -27,6 +27,7 @@ const navigation = [
     { path: 'news', label: 'News & stories', icon: BookOpen },
   ] },
   { section: 'OUR COMMUNITY', items: [
+    { path: 'team', label: 'Team', icon: Users },
     { path: 'volunteers', label: 'Volunteers', icon: Users },
     { path: 'donations', label: 'Donations', icon: HandHeart },
     { path: 'messages', label: 'Messages', icon: Mail },
@@ -40,7 +41,7 @@ const navigation = [
   ] },
 ]
 const titles: Record<string, [string, string]> = {
-  '': ['Overview', ''], outreaches: ['Outreaches', ''], programs: ['Programs', ''], news: ['News & stories', ''],
+  '': ['Overview', ''], outreaches: ['Outreaches', ''], programs: ['Programs', ''], news: ['News & stories', ''], team: ['Team', ''],
   volunteers: ['Volunteers', ''], donations: ['Donations', ''], messages: ['Messages', ''],
   subscribers: ['Subscribers', ''], reports: ['Reports', ''], settings: ['Settings', ''],
   analytics: ['Analytics', ''], admins: ['Administrators', ''], 'audit-logs': ['Audit logs', ''],
@@ -270,7 +271,7 @@ export default function AdminDashboard({ adminEmail, adminName = '', onProfileSa
 
     {section === 'donations' && <><div className="a-mini-stats"><div><HandHeart/><span><strong>{money(received)}</strong>Received contributions</span></div><div><Heart/><span><strong>{money(workspace.donations.filter(d => d.status === 'Pledged').reduce((s, d) => s + d.amount, 0))}</strong>Pledged support</span></div><div><Users/><span><strong>{workspace.donations.length}</strong>Recorded contributions</span></div></div><section className="a-panel">{toolbar(['Received', 'Pledged', 'Test'], 'donations', 'donation')}<div className="a-table-wrap"><table className="a-table"><thead><tr><th>SUPPORTER</th><th>PROGRAM</th><th>AMOUNT</th><th>DATE</th><th>STATUS</th><th><span className="sr-only">Edit donation</span></th></tr></thead><tbody>{donationRows.slice((page - 1) * 8, page * 8).map(d => <tr key={d.id}><td><strong>{d.name}</strong></td><td>{d.program}</td><td><strong>{money(d.amount)}</strong></td><td>{shortDate(d.date)} {d.date.slice(0, 4)}</td><td><Badge>{d.status}</Badge></td><td>{d.source === 'paystack' ? <span className="a-badge blue">{d.paymentMode === 'test' ? 'Test payment' : 'Paystack verified'}</span> : <button className="a-icon-button" aria-label={`Edit contribution from ${d.name}`} onClick={() => setEditor({ kind: 'donation', record: d })}><ArrowUpRight size={17}/></button>}</td></tr>)}</tbody></table>{!donationRows.length && <Empty text="No donations match this view."/>}</div><Pagination total={donationRows.length} page={page} setPage={setPage}/></section><p className="a-section-note">Paystack donations appear after verification. Test payments are excluded from received totals. You can also record contributions received outside the website.</p></>}
 
-    {(section === 'programs' || section === 'news') && <ContentManager key={section} kind={section}/>}
+    {(section === 'programs' || section === 'news' || section === 'team') && <ContentManager key={section} kind={section}/>}
 
     {section === 'messages' && <section className="a-panel"><div className="a-toolbar"><label className="a-search"><Search size={17}/><input aria-label="Search messages" placeholder="Search messages…" value={query} onChange={e => setQuery(e.target.value)}/></label><span className="a-section-note">{unread} unread · Contact enquiries</span></div><div className="a-message-list">{workspace.messages.filter(m => matches([m.name, m.subject, m.message])).map(m => <button className={`a-message ${m.read ? '' : 'unread'}`} key={m.id} onClick={() => openMessage(m.id)}><span className="a-action-icon tint-0"><Mail size={20}/></span><span><span className="a-message-name">{m.name}{!m.read && <i/>}</span><strong>{m.subject}</strong><small>{m.message}</small></span><time dateTime={m.date}>{shortDate(m.date)}</time><ChevronRight size={17}/></button>)}{!workspace.messages.some(m => matches([m.name, m.subject, m.message])) && <Empty text="No messages match your search."/>}</div></section>}
 

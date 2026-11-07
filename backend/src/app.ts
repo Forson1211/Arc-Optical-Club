@@ -12,6 +12,7 @@ import { auditApiRequests } from './lib/activity.js'
 import { adminRoutes } from './routes/adminRoutes.js'
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js'
 import { storageMode } from './lib/store.js'
+import { seoRoutes } from './routes/seoRoutes.js'
 
 export function createApp({ paymentFetch = fetch }: { paymentFetch?: typeof fetch } = {}) {
   const app = express()
@@ -32,6 +33,7 @@ export function createApp({ paymentFetch = fetch }: { paymentFetch?: typeof fetc
   app.use('/api/newsletter', newsletterRoutes)
   app.use('/api/activity', activityRoutes)
   app.use('/api/content', contentRoutes)
+  app.use('/api/seo', seoRoutes())
   app.use('/api/donations', donationRoutes(allowedOrigins, paymentFetch))
   app.use('/api/admin', adminRoutes(allowedOrigins))
   app.use(notFoundHandler)

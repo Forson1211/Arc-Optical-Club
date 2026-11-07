@@ -19,6 +19,7 @@ import DonationReturn from './pages/DonationReturn'
 import News from './pages/News'
 import NewsDetail from './pages/NewsDetail'
 import './pages/content.css'
+import Seo from './components/Seo'
 
 const pages = [
   { path: '/gallery', element: <Gallery/> }, { path: '/academy', element: <Learning/> },
@@ -28,5 +29,5 @@ const pages = [
 ]
 
 export default function App() {
-  return <><RouteScrollReset/><SiteActivityTracker/><Routes><Route path="/admin/*" element={<AdminAccess/>}/><Route element={<div className="site-typography min-h-screen bg-[#10394B]"><Navbar/><Outlet/><Footer/><WhatsAppChat/></div>}><Route path="/" element={<Home/>}/><Route path="/about" element={<OurStory/>}/><Route path="/programs" element={<Programs/>}/><Route path="/contact" element={<Contact/>}/><Route path="/join" element={<Join/>}/><Route path="/team" element={<Team/>}/>{pages.map(page=><Route key={page.path} path={page.path} element={page.element}/>) }<Route path="*" element={<PlaceholderPage title="Page not found" description="The page you are looking for may have moved or is not available."/>}/></Route></Routes></>
+  return <><Seo/><RouteScrollReset/><SiteActivityTracker/><Routes><Route path="/admin/*" element={<AdminAccess/>}/><Route element={<div className="site-typography min-h-screen bg-[#10394B]"><Navbar/><Outlet/><Footer/><WhatsAppChat/></div>}><Route path="/" element={<Home/>}/><Route path="/about" element={<OurStory/>}/><Route path="/programs" element={<Programs/>}/><Route path="/contact" element={<Contact/>}/><Route path="/join" element={<Join/>}/><Route path="/team" element={<Team/>}/>{pages.map(page=><Route key={page.path} path={page.path} element={page.element}/>) }<Route path="*" element={<PlaceholderPage title="Page not found" description="The page you are looking for may have moved or is not available."/>}/></Route></Routes></>
 }

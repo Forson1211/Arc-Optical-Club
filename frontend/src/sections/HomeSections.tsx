@@ -136,7 +136,8 @@ export function Pillars() {
 
 export function ProgramsPreview() {
   const { data } = useContent<ContentProgram[]>('/content/programs')
-  const programs = data && data.length ? data : defaultPrograms
+  const programs = data ?? defaultPrograms
+  if (!programs.length) return null
   return <section id="our-programs" className="py-24"><Container><div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><SectionHeading title="Our Programs" description="Free eye screenings, eye-health education and community care for children, families and communities across Ghana." /><Link to="/programs" className="inline-flex shrink-0 items-center gap-2 text-sm font-extrabold text-arc-yellow">Explore programs <ArrowUpRight size={17} /></Link></div><div className="mt-12 grid gap-6 md:grid-cols-3">{programs.map(p => <article key={p.title} className="overflow-hidden rounded-[1.6rem] bg-white transition hover:-translate-y-1 hover:shadow-soft"><SiteImage sizes="(max-width: 767px) 100vw, 380px" src={contentImage(p.image)} alt={p.alt} loading="lazy" className="aspect-[4/3] w-full object-cover" /><div className="p-6"><p className="eyebrow">{p.category}</p><h3 className="mt-3 text-xl font-extrabold text-arc-navy">{p.title}</h3><p className="mt-3 text-sm leading-6 sm:leading-7 text-arc-slate">{p.description}</p><Link to="/programs" className="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-arc-blue">Learn more <ArrowUpRight size={16} /></Link></div></article>)}</div></Container></section>
 }
 
