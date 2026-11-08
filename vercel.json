@@ -16,6 +16,7 @@
     { "source": "/about", "destination": "/about/index.html" },
     { "source": "/programs", "destination": "/programs/index.html" },
     { "source": "/team", "destination": "/team/index.html" },
+    { "source": "/partners", "destination": "/partners/index.html" },
     { "source": "/academy", "destination": "/academy/index.html" },
     { "source": "/research", "destination": "/research/index.html" },
     { "source": "/gallery", "destination": "/gallery/index.html" },

@@ -3,6 +3,12 @@ import { findRecord, HttpError, listRecords } from '../lib/store.js'
 
 const router = Router()
 router.use((_req, res, next) => { res.set('Cache-Control', 'no-store'); next() })
+router.get('/partners', async (_req, res, next) => {
+  try {
+    const records = (await listRecords('partners')).filter(record => record.status === 'published' && !!record.image).sort((a, b) => Number(a.order) - Number(b.order))
+    res.json({ success: true, data: records })
+  } catch (error) { next(error) }
+})
 router.get('/team', async (_req, res, next) => {
   try {
     const records = (await listRecords('teammembers')).filter(record => record.status === 'published').sort((a, b) => Number(a.order) - Number(b.order))

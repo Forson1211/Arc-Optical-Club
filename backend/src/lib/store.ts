@@ -5,8 +5,9 @@ import path from 'node:path'
 import mongoose from 'mongoose'
 import { initialPrograms, legacyProgramDetails } from '../data/programs.js'
 import { initialTeam } from '../data/team.js'
+import { initialPartners } from '../data/partners.js'
 
-export const collections = ['outreaches', 'volunteers', 'donations', 'contactmessages', 'newslettersubscribers', 'adminusers', 'adminsessions', 'auditlogs', 'siteevents', 'programs', 'news', 'contentimages', 'paymentattempts', 'teammembers'] as const
+export const collections = ['outreaches', 'volunteers', 'donations', 'contactmessages', 'newslettersubscribers', 'adminusers', 'adminsessions', 'auditlogs', 'siteevents', 'programs', 'news', 'contentimages', 'paymentattempts', 'teammembers', 'partners'] as const
 export type Collection = typeof collections[number]
 export type RecordData = { id: string; createdAt: string; updatedAt: string; [key: string]: unknown }
 type LocalDatabase = Record<Collection, RecordData[]>
@@ -34,10 +35,12 @@ export async function initializeStorage() {
     await mongoose.connection.collection('auditlogs').createIndex({ category: 1, createdAt: -1 })
     await mongoose.connection.collection('programs').createIndex({ initialKey: 1 }, { unique: true, sparse: true })
     await mongoose.connection.collection('teammembers').createIndex({ initialKey: 1 }, { unique: true, sparse: true })
+    await mongoose.connection.collection('partners').createIndex({ initialKey: 1 }, { unique: true, sparse: true })
     await mongoose.connection.collection('paymentattempts').createIndex({ reference: 1 }, { unique: true })
     await mongoose.connection.collection('donations').createIndex({ paymentReference: 1 }, { unique: true, sparse: true })
     await seedPrograms()
     await seedTeam()
+    await seedPartners()
     return
   }
   if (process.env.NODE_ENV === 'production') throw new Error('MongoDB is required in production. Set MONGODB_URI before starting the API.')
@@ -48,7 +51,7 @@ export async function initializeStorage() {
   try {
     const stored = JSON.parse(await readFile(databaseFile, 'utf8'))
     // Upgrade existing local workspaces without replacing their records.
-    for (const name of ['auditlogs', 'siteevents', 'programs', 'news', 'contentimages', 'paymentattempts', 'teammembers']) if (stored[name] === undefined) stored[name] = []
+    for (const name of ['auditlogs', 'siteevents', 'programs', 'news', 'contentimages', 'paymentattempts', 'teammembers', 'partners']) if (stored[name] === undefined) stored[name] = []
     if (!collections.every(name => Array.isArray(stored[name]))) throw new Error('Invalid local database format. Restore it from a backup before restarting.')
     localData = stored
   } catch (error) {
@@ -58,6 +61,16 @@ export async function initializeStorage() {
   }
   await seedPrograms()
   await seedTeam()
+  await seedPartners()
+}
+
+async function seedPartners() {
+  for (const [index, partner] of initialPartners.entries()) {
+    const initialKey = `concept-partner-${index}`
+    if (await findRecord('partners', 'initialKey', initialKey)) continue
+    try { await insertRecord('partners', { ...partner, initialKey }, ['initialKey']) }
+    catch (error) { if (!(error instanceof HttpError) || error.status !== 409) throw error }
+  }
 }
 
 async function seedPrograms() {

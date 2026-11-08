@@ -20,8 +20,10 @@ import News from './pages/News'
 import NewsDetail from './pages/NewsDetail'
 import './pages/content.css'
 import Seo from './components/Seo'
+import Partners from './pages/Partners'
 
 const pages = [
+  { path: '/partners', element: <Partners/> },
   { path: '/gallery', element: <Gallery/> }, { path: '/academy', element: <Learning/> },
   { path: '/research', element: <Learning research/> }, { path: '/donate', element: <Donate/> },
   { path: '/donate/thank-you', element: <DonationReturn/> },

@@ -1,6 +1,6 @@
 import { api } from './api'
 
-const paths = ['/', '/about', '/programs', '/contact', '/team', '/join', '/gallery', '/academy', '/research', '/donate', '/news', '/404']
+const paths = ['/', '/about', '/programs', '/contact', '/team', '/partners', '/join', '/gallery', '/academy', '/research', '/donate', '/news', '/404']
 export const publicPath = (path: string) => path.startsWith('/donate/') ? '/donate' : /^\/news\/[^/]+\/?$/.test(path) ? '/news' : paths.includes(path.replace(/\/$/, '') || '/') ? path.replace(/\/$/, '') || '/' : '/404'
 type SiteEvent = { eventId: string; visitorId: string; sessionId: string; type: 'page_view' | 'click'; path: string; target?: string; element?: 'link' | 'button' | 'control'; referrerHost?: string }
 const queueKey = 'arc-traffic-pending-v1'

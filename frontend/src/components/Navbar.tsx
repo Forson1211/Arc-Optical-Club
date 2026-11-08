@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import BrandLogo, { brandLogoSize } from './BrandLogo'
 
 const groups = [
-  { label: 'About Arc', links: [{ label: 'Our story', to: '/about' }, { label: 'Our team', to: '/team' }] },
+  { label: 'About Arc', links: [{ label: 'Our story', to: '/about' }, { label: 'Our team', to: '/team' }, { label: 'Our partners', to: '/partners' }] },
   { label: 'Our work', links: [{ label: 'Our programs', to: '/programs' }, { label: 'Gallery', to: '/gallery' }] },
   { label: 'Learn & grow', links: [{ label: 'ARC Academy', to: '/academy' }, { label: 'Research', to: '/research' }] },
 ]

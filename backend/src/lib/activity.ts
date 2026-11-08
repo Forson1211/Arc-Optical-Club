@@ -4,7 +4,7 @@ import { z } from 'zod'
 import type { NextFunction, Request, Response } from 'express'
 import { HttpError, insertRecord, listRecords, storageMode } from './store.js'
 
-export const publicPaths = ['/', '/about', '/programs', '/contact', '/team', '/join', '/gallery', '/academy', '/research', '/donate', '/news', '/404'] as const
+export const publicPaths = ['/', '/about', '/programs', '/contact', '/team', '/partners', '/join', '/gallery', '/academy', '/research', '/donate', '/news', '/404'] as const
 export const eventSchema = z.object({
   eventId: z.string().uuid(), visitorId: z.string().uuid(), sessionId: z.string().uuid(),
   type: z.enum(['page_view', 'click']), path: z.enum(publicPaths),
@@ -13,7 +13,7 @@ export const eventSchema = z.object({
 })
 export const adminActivitySchema = z.object({
   eventId: z.string().uuid(), type: z.enum(['page_view', 'click', 'export']),
-  path: z.enum(['/admin', '/admin/outreaches', '/admin/programs', '/admin/news', '/admin/team', '/admin/volunteers', '/admin/donations', '/admin/messages', '/admin/subscribers', '/admin/reports', '/admin/settings', '/admin/analytics', '/admin/admins', '/admin/audit-logs']),
+  path: z.enum(['/admin', '/admin/outreaches', '/admin/programs', '/admin/news', '/admin/team', '/admin/partners', '/admin/volunteers', '/admin/donations', '/admin/messages', '/admin/subscribers', '/admin/reports', '/admin/settings', '/admin/analytics', '/admin/admins', '/admin/audit-logs']),
   action: z.enum(['navigation', 'button', 'outreach.export', 'subscribers.export', 'analytics.period']).optional(),
 })
 
@@ -62,7 +62,7 @@ export function auditApiRequests(req: Request, res: Response, next: NextFunction
     else if (path === '/api/admin/password') { action = 'admin.password_changed'; category = 'security'; description = 'Administrator password changed' }
     else if (path === '/api/admin/admins' && req.method === 'POST') { action = 'admin.created'; category = 'security'; description = 'Administrator account created' }
     else {
-      const resource = path.match(/^\/api\/admin\/(outreaches|volunteers|donations|messages|subscribers|programs|news|team|content-images)(?:\/[^/]+)?$/)?.[1]
+      const resource = path.match(/^\/api\/admin\/(outreaches|volunteers|donations|messages|subscribers|programs|news|team|partners|content-images)(?:\/[^/]+)?$/)?.[1]
       if (resource) { action = `${resource}.${req.method === 'POST' ? 'created' : 'updated'}`; category = resource === 'donations' ? 'giving' : ['outreaches', 'programs', 'news', 'content-images'].includes(resource) ? 'programs' : 'community'; description = `${resource[0].toUpperCase() + resource.slice(1)} ${req.method === 'POST' ? 'record created' : 'record updated'}` }
       else if (accessDenied) { action = 'admin.access_denied'; category = 'security'; description = 'Admin access denied' }
     }
@@ -71,7 +71,7 @@ export function auditApiRequests(req: Request, res: Response, next: NextFunction
     const resourceId = typeof data?.id === 'string' ? data.id : path.split('/').at(-1)
     const safeId = resourceId && /^[a-f\d-]{24,36}$/i.test(resourceId) ? resourceId : undefined
     const knownPath = /^\/api\/(join|contact|newsletter|admin\/(login|logout|session|workspace|admins|analytics|audit-logs|profile|password))$/.test(path)
-    const safePath = knownPath ? path : /^\/api\/admin\/(outreaches|volunteers|donations|messages|subscribers|programs|news|team|content-images)(\/[^/]+)?$/.test(path) ? path.replace(/(\/api\/admin\/[^/]+)\/.+$/, '$1/:id') : '/api/:unknown'
+    const safePath = knownPath ? path : /^\/api\/admin\/(outreaches|volunteers|donations|messages|subscribers|programs|news|team|partners|content-images)(\/[^/]+)?$/.test(path) ? path.replace(/(\/api\/admin\/[^/]+)\/.+$/, '$1/:id') : '/api/:unknown'
     void writeAudit({ action, category, description: success ? description : `${description} — unsuccessful`, outcome: success ? 'success' : 'failure', source: 'server',
       actorType: admin ? 'admin' : 'visitor', actorId: admin?.id, actorEmail: admin?.email, statusCode, path: safePath, resourceId: safeId })
       .then(() => send(body)).catch(error => { res.status(503); next(new HttpError(503, 'The activity log could not be saved. Check your records before retrying this action.')); console.error('Audit persistence failed:', error.name) })

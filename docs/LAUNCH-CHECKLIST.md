@@ -9,7 +9,7 @@ The code is prepared for the public address **https://arcoptical.org**. The visu
 - Public page content is rendered to HTML at build time. Published news listings and articles render from the database on request, so crawlers and sharing tools can read them without executing JavaScript.
 - `/robots.txt`, `/sitemap.xml` and `/sitemap-pages.xml`. The sitemap index also includes `/api/seo/news-sitemap.xml`, which automatically includes published stories and excludes drafts.
 - Noindex protection for admin screens, donation receipts and missing stories. Missing stories return an actual HTTP 404; unknown static routes use the generated `404.html`.
-- An existing optimized square brand image is used as the favicon. Existing responsive image optimization stays in place.
+- The supplied eye logo is used as the favicon, with a PNG fallback and a transparent square SVG canvas. Existing responsive image optimization stays in place.
 
 ## Finish before announcing the site
 

@@ -11,6 +11,7 @@ const sections = [
     title: 'Get involved',
     links: [
       { label: 'Join Arc', to: '/join' },
+      { label: 'See upcoming events', to: '/#sight-for-kids' },
       { label: 'Donate or partner', to: '/donate' },
     ],
   },
@@ -19,6 +20,7 @@ const sections = [
     links: [
       { label: 'About us', to: '/about' },
       { label: 'Our team', to: '/team' },
+      { label: 'Our partners', to: '/partners' },
       { label: 'Our programs', to: '/programs' },
       { label: 'Gallery', to: '/gallery' },
     ],

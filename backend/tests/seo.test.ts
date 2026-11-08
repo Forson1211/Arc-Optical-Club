@@ -70,7 +70,7 @@ test('published stories render crawlable HTML, sharing metadata and an automatic
     }
     // An empty published list must not revive hidden programs from the seed data.
     const emptyPrograms = module.renderPage('/programs', { '/content/programs': [] })
-    assert(!emptyPrograms.html.includes('Sight For Kids'))
+    assert(!emptyPrograms.html.includes('class="program-row"'))
     assert(emptyPrograms.html.includes('New initiatives are on the way.'))
     const injection = module.renderPage(`/news/${draft.id}`, { [`/content/news/${draft.id}`]: { ...draft, title: '</title><script>attack()</script>' }, '/content/news': [] })
     assert(!injection.head.includes('</title><script>attack()'))

@@ -102,7 +102,7 @@ export const initialTeam = [
   {
     "title": "Mr. Michael Owusu",
     "role": "Chief Financial Officer",
-    "category": "Operations",
+    "category": "Team Members",
     "image": "",
     "alt": "",
     "order": 11,
@@ -111,7 +111,7 @@ export const initialTeam = [
   {
     "title": "Ms. Karen Osafo Adjei",
     "role": "Recruitment Manager",
-    "category": "Operations",
+    "category": "Team Members",
     "image": "",
     "alt": "",
     "order": 12,
@@ -120,7 +120,7 @@ export const initialTeam = [
   {
     "title": "Ms. Jennifer Teye",
     "role": "Fundraising Coordinator",
-    "category": "Operations",
+    "category": "Team Members",
     "image": "",
     "alt": "",
     "order": 13,

@@ -143,7 +143,7 @@ export function ProgramsPreview() {
 
 export function EventFeature() {
   return (
-    <section id="sight-for-kids" className="sight-feature" aria-labelledby="sight-feature-heading">
+    <section id="sight-for-kids" className="sight-feature scroll-mt-24" aria-labelledby="sight-feature-heading">
       <SiteImage sizes="(max-width: 639px) 1300px, 100vw" src="/images/sight-for-kids-background.png" alt="" className="sight-feature-background" loading="lazy" />
       <div className="sight-feature-shade" aria-hidden="true" />
       <Container className="relative z-10">
@@ -209,10 +209,10 @@ export function WhyArc() {
                 aria-label={`${title}. ${isFlipped ? 'Show icon and title' : 'View explanation'}.`}
                 aria-describedby={isFlipped ? `why-arc-description-${index}` : undefined}
                 onClick={() => setFlipped(previous => ({ ...previous, [title]: !previous[title] }))}
-                className="why-arc-card group w-full rounded-sm text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-arc-yellow"
+                className="why-arc-card group h-[250px] w-full rounded-2xl text-center sm:h-[300px] sm:rounded-[1.75rem] md:h-[350px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-arc-yellow"
               >
                 <span className="why-arc-card-inner">
-                  <span aria-hidden={isFlipped} className="why-arc-card-face flex min-h-[320px] flex-col items-center justify-center rounded-sm border border-slate-100 bg-white px-6 py-8 shadow-[0_2px_18px_rgba(20,43,59,0.06)] lg:min-h-[346px] lg:px-5">
+                  <span aria-hidden={isFlipped} className="why-arc-card-face flex h-full flex-col items-center justify-center border border-slate-100 bg-white px-5 py-5 shadow-[0_2px_18px_rgba(20,43,59,0.06)] sm:px-6 sm:py-6 lg:px-5">
                     <span className={`relative grid h-[104px] w-[104px] shrink-0 place-items-center rounded-full text-white ${color}`} aria-hidden="true">
                       {index === 0 ? (
                         <>
@@ -221,13 +221,13 @@ export function WhyArc() {
                         </>
                       ) : <Icon size={50} strokeWidth={1.65} />}
                     </span>
-                    <span className="mt-6 block text-[16px] font-extrabold leading-6 text-arc-navy">{title}</span>
-                    <span className="mt-5 flex items-center gap-1.5 text-[11px] font-semibold text-arc-slate"><RotateCw size={14} aria-hidden="true" />View details</span>
+                    <span className="mt-4 block text-[16px] font-extrabold leading-6 text-arc-navy sm:mt-6">{title}</span>
+                    <span className="mt-4 flex items-center gap-1.5 text-[11px] font-semibold text-arc-slate sm:mt-5"><RotateCw size={14} aria-hidden="true" />View details</span>
                   </span>
-                  <span aria-hidden={!isFlipped} className="why-arc-card-face why-arc-card-back flex min-h-[320px] flex-col items-center justify-center rounded-sm border border-slate-100 bg-white px-6 py-8 shadow-[0_2px_18px_rgba(20,43,59,0.06)] lg:min-h-[346px] lg:px-5">
+                  <span aria-hidden={!isFlipped} className="why-arc-card-face why-arc-card-back flex h-full flex-col items-center justify-center border border-slate-100 bg-white px-5 py-5 shadow-[0_2px_18px_rgba(20,43,59,0.06)] sm:px-6 sm:py-6 lg:px-5">
                     <span className="block text-[16px] font-extrabold leading-6 text-arc-navy">{title}</span>
-                    <span id={`why-arc-description-${index}`} className="mt-4 block max-w-[26rem] text-[14px] leading-6 text-arc-slate">{description}</span>
-                    <span className="mt-5 flex items-center gap-1.5 text-[11px] font-semibold text-arc-slate"><RotateCw size={14} aria-hidden="true" />Back to icon</span>
+                    <span id={`why-arc-description-${index}`} className="mt-3 block max-w-[26rem] text-[14px] leading-5 text-arc-slate sm:mt-4 sm:leading-6">{description}</span>
+                    <span className="mt-4 flex items-center gap-1.5 text-[11px] font-semibold text-arc-slate sm:mt-5"><RotateCw size={14} aria-hidden="true" />Back to icon</span>
                   </span>
                 </span>
               </button>

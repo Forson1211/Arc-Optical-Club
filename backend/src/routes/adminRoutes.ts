@@ -7,7 +7,7 @@ import { getAnalytics } from '../lib/analytics.js'
 import { donationSchema, email, outreachSchema, volunteerSchema } from '../lib/validation.js'
 import { findRecord, HttpError, insertRecord, listRecords, storageMode, updateRecord } from '../lib/store.js'
 import type { Collection, RecordData } from '../lib/store.js'
-import { newsSchema, programContentSchema, teamProfileSchema } from '../lib/content.js'
+import { newsSchema, partnerSchema, programContentSchema, teamProfileSchema } from '../lib/content.js'
 
 const publicAdmin = (user: RecordData) => ({ id: user.id, name: String(user.name || ''), email: String(user.email), createdAt: user.createdAt, lastLoginAt: user.lastLoginAt || null })
 
@@ -44,7 +44,7 @@ export function adminRoutes(allowedOrigins: string[]) {
       res.status(201).json({ success: true, data: { id: record.id, src: `/api/content/images/${record.id}` } })
     } catch (error) { next(error) }
   })
-  for (const name of ['news', 'programs', 'teammembers'] as const) router.get(`/${name === 'teammembers' ? 'team' : name}`, async (_req, res, next) => {
+  for (const name of ['news', 'programs', 'teammembers', 'partners'] as const) router.get(`/${name === 'teammembers' ? 'team' : name}`, async (_req, res, next) => {
     try { res.json({ success: true, data: await listRecords(name) }) } catch (error) { next(error) }
   })
   router.get('/session', (_req, res) => { res.json({ success: true, data: res.locals.admin }) })
@@ -121,6 +121,7 @@ export function adminRoutes(allowedOrigins: string[]) {
     { name: 'programs', schema: programContentSchema, uniqueKeys: [] },
     { name: 'news', schema: newsSchema, uniqueKeys: [] },
     { name: 'teammembers', path: 'team', schema: teamProfileSchema, uniqueKeys: [] },
+    { name: 'partners', schema: partnerSchema, uniqueKeys: [] },
   ]
   for (const resource of resources) {
     const route = resource.path || resource.name
