@@ -167,9 +167,89 @@
 .past-outreach-detail { padding-bottom: 24px; max-width: 800px; font-size: .875rem; line-height: 1.5; color: #ffffffbf; }
 .past-outreach-detail p + p { margin-top: 12px; }
 .past-outreach-detail .past-outreach-impact { color: #FEBE01; font-weight: 700; }
-.partner-logos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 48px; align-items: center; padding-block: 24px 60px; }
-.partner-logos > :is(a, div) { display: flex; justify-content: center; align-items: center; min-height: 160px; }
-.partner-logos img { width: auto; max-width: min(100%, 320px); max-height: 140px; object-fit: contain; }
+.partner-logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 36px 48px;
+  padding-block: 28px 88px;
+  width: 100%;
+}
+.partner-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  width: min(100%, 330px);
+  color: inherit;
+  transition: transform 0.25s ease;
+}
+a.partner-item:hover {
+  transform: translateY(-4px);
+}
+a.partner-item:hover .partner-name {
+  color: #FEBE01;
+}
+.partner-logo-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 135px;
+  padding: 16px 28px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+a.partner-item:hover .partner-logo-card {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+}
+.partner-logo-card img {
+  width: auto;
+  max-width: 220px;
+  max-height: 92px;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+a.partner-item:hover .partner-logo-card img {
+  transform: scale(1.04);
+}
+.partner-name {
+  margin-top: 18px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  line-height: 1.45;
+  transition: color 0.25s ease;
+}
+@media (max-width: 639px) {
+  .partner-logos {
+    gap: 36px;
+    padding-block: 24px 56px;
+  }
+  .partner-item {
+    width: 100%;
+    max-width: 300px;
+  }
+  .partner-logo-card {
+    height: 115px;
+    padding: 12px 20px;
+    border-radius: 20px;
+  }
+  .partner-logo-card img {
+    max-height: 80px;
+    max-width: 180px;
+  }
+  .partner-name {
+    margin-top: 14px;
+    font-size: 0.8rem;
+  }
+}
 .donation-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .9fr); align-items: start; gap: 35px; }
 .donation-form { background: white; color: #142B3B; padding: 30px; }
 .donation-form fieldset { border: 0; min-width: 0; padding: 0; }

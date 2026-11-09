@@ -5382,3 +5382,28 @@
 @media (max-width: 767px) { .a-content-photo { width: 75px; height: 70px; } }
 .a-partner-form .a-image-preview, .a-content-manager[data-kind="partners"] .a-content-photo { background: #10394B; }
 .a-partner-form .a-image-preview, .a-content-manager[data-kind="partners"] .a-content-photo img { object-fit: contain; }
+
+.a-crop-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 40, 61, 0.78);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.a-crop-modal-dialog {
+  width: min(440px, 100%);
+  background: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  padding: 24px;
+  border: 1px solid #e1ebef;
+}
+.a-crop-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}

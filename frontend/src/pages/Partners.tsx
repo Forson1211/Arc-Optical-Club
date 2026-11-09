@@ -13,8 +13,27 @@ export default function Partners() {
       <header className="page-intro"><h1>Our partners</h1></header>
       {error && !visible.length ? <ContentState error={error} retry={retry}/> : <div className="partner-logos" aria-label="Partner organizations">
         {visible.map(partner => {
-          const logo = <SiteImage src={contentImage(partner.image)} alt={partner.alt || `${partner.title} logo`} sizes="(max-width: 639px) 240px, 320px"/>
-          return partner.website ? <a key={partner.id} href={partner.website} aria-label={partner.title} target="_blank" rel="noreferrer">{logo}</a> : <div key={partner.id}>{logo}</div>
+          const content = (
+            <>
+              <div className="partner-logo-card">
+                <SiteImage
+                  src={contentImage(partner.image)}
+                  alt={partner.alt || `${partner.title} logo`}
+                  sizes="(max-width: 639px) 240px, 320px"
+                />
+              </div>
+              <span className="partner-name">{partner.title}</span>
+            </>
+          )
+          return partner.website ? (
+            <a key={partner.id} href={partner.website} className="partner-item" aria-label={partner.title} target="_blank" rel="noreferrer">
+              {content}
+            </a>
+          ) : (
+            <div key={partner.id} className="partner-item">
+              {content}
+            </div>
+          )
         })}
       </div>}
     </Container>

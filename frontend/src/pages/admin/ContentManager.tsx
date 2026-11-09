@@ -1,5 +1,5 @@
 import SiteImage from '../../components/SiteImage'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { ArrowDown, ArrowUp, Eye, Plus, RefreshCw, Save, Trash2, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -8,27 +8,133 @@ import { articleDate, contentImage } from '../../lib/content'
 import type { ArticleBlock, ContentProgram, NewsArticle, Partner, TeamProfile } from '../../lib/content'
 import NewsArticleView from '../../components/NewsArticleView'
 import { optimizeImageUpload } from '../../lib/images'
+import ImageCropperModal from './ImageCropperModal'
 
 type Content = ContentProgram | NewsArticle | TeamProfile | Partner
 type FormProps<T> = { initial: T; saving: boolean; onSave: (value: T) => void; onCancel: () => void }
 const newProgram = (): ContentProgram => ({ id: '', title: '', category: '', description: '', detail: '', image: '', alt: '', status: 'draft', order: 0 })
 const newArticle = (): NewsArticle => ({ id: '', title: '', excerpt: '', author: 'Arc Editorial Team', category: 'Community', image: '', alt: '', status: 'draft', publishedAt: new Date().toISOString(), blocks: [{ type: 'paragraph', text: '' }] })
 
-function ImageField({ value, alt, onChange, onAlt, onUploading, optional = false }: { value: string; alt: string; onChange: (value: string) => void; onAlt: (value: string) => void; onUploading: (change: number) => void; optional?: boolean }) {
-  const [error, setError] = useState(''), [busy, setBusy] = useState(false)
-  async function upload(file?: File) {
+function ImageField({
+  value,
+  alt,
+  onChange,
+  onAlt,
+  onUploading,
+  optional = false,
+  enableCrop = false,
+  cropAspect = 1,
+}: {
+  value: string
+  alt: string
+  onChange: (value: string) => void
+  onAlt: (value: string) => void
+  onUploading: (change: number) => void
+  optional?: boolean
+  enableCrop?: boolean
+  cropAspect?: number
+}) {
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [cropFile, setCropFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  async function uploadBlob(blobOrFile: Blob | File) {
+    if (busy) return
+    setError('')
+    setBusy(true)
+    onUploading(1)
+    try {
+      const fileToOptimize =
+        blobOrFile instanceof File
+          ? blobOrFile
+          : new File([blobOrFile], 'team-photo.webp', { type: blobOrFile.type || 'image/webp' })
+      const image = await optimizeImageUpload(fileToOptimize)
+      const { data } = await adminApi.post('/admin/content-images', image, {
+        headers: { 'Content-Type': image.type },
+        timeout: 60000,
+      })
+      onChange(data.data.src)
+    } catch (failure) {
+      setError(apiErrorMessage(failure, 'The image could not be uploaded.'))
+    } finally {
+      setBusy(false)
+      onUploading(-1)
+    }
+  }
+
+  function handleFileSelected(file?: File) {
     if (!file || busy) return
     setError('')
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) { setError('Choose a JPEG, PNG or WebP image under 5 MB.'); return }
-    setBusy(true); onUploading(1)
-    try {
-      const image = await optimizeImageUpload(file)
-      const { data } = await adminApi.post('/admin/content-images', image, { headers: { 'Content-Type': image.type }, timeout: 60000 })
-      onChange(data.data.src)
-    } catch (failure) { setError(apiErrorMessage(failure, 'The image could not be uploaded.')) }
-    finally { setBusy(false); onUploading(-1) }
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 8 * 1024 * 1024) {
+      setError('Choose a JPEG, PNG or WebP image under 8 MB.')
+      return
+    }
+    if (enableCrop) {
+      setCropFile(file)
+    } else {
+      void uploadBlob(file)
+    }
   }
-  return <div className="a-image-field"><label>Image{optional ? ' (optional)' : ''}<input value={value} onChange={event => onChange(event.target.value)} required={!optional} maxLength={2048} placeholder="Upload below, /images/photo.jpg or https://…"/></label><label className="a-upload-label">{busy ? 'Uploading…' : 'Upload an image'}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={event => { void upload(event.target.files?.[0]); event.target.value = '' }}/></label><small>JPEG, PNG or WebP · Up to 5 MB</small><label>Image description<input value={alt} onChange={event => onAlt(event.target.value)} required={!optional || !!value} minLength={3} maxLength={240} placeholder="Describe the photo for visitors using a screen reader"/></label>{value && <SiteImage className="a-image-preview" src={contentImage(value)} alt={alt || 'Selected image'}/ >}{error && <p className="a-feature-error" role="alert">{error}</p>}</div>
+
+  return (
+    <div className="a-image-field">
+      <label>
+        Image{optional ? ' (optional)' : ''}
+        <input
+          value={value}
+          onChange={event => onChange(event.target.value)}
+          required={!optional}
+          maxLength={2048}
+          placeholder="Upload below, /images/photo.jpg or https://…"
+        />
+      </label>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+        <label className="a-upload-label" style={{ margin: 0 }}>
+          {busy ? 'Uploading…' : enableCrop ? 'Upload & Crop photo' : 'Upload an image'}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            disabled={busy}
+            onChange={event => {
+              handleFileSelected(event.target.files?.[0])
+              event.target.value = ''
+            }}
+          />
+        </label>
+      </div>
+      <small>
+        JPEG, PNG or WebP · Up to 8 MB
+        {enableCrop ? ' · Interactive 1:1 square crop tool included' : ''}
+      </small>
+      <label>
+        Image description
+        <input
+          value={alt}
+          onChange={event => onAlt(event.target.value)}
+          required={!optional || !!value}
+          minLength={3}
+          maxLength={240}
+          placeholder="Describe the photo for visitors using a screen reader"
+        />
+      </label>
+      {value && <SiteImage className="a-image-preview" src={contentImage(value)} alt={alt || 'Selected image'} />}
+      {error && <p className="a-feature-error" role="alert">{error}</p>}
+
+      {cropFile && (
+        <ImageCropperModal
+          file={cropFile}
+          aspectRatio={cropAspect}
+          onCrop={croppedBlob => {
+            setCropFile(null)
+            void uploadBlob(croppedBlob)
+          }}
+          onCancel={() => setCropFile(null)}
+        />
+      )}
+    </div>
+  )
 }
 
 function ProgramForm({ initial, saving, onSave, onCancel }: FormProps<ContentProgram>) {
@@ -47,7 +153,7 @@ function TeamForm({ initial, saving, onSave, onCancel }: FormProps<TeamProfile>)
       <label>Role<input required minLength={2} maxLength={160} value={value.role} onChange={event => setValue(current => ({ ...current, role: event.target.value }))}/></label>
       <label>Team group<select value={value.category} onChange={event => setValue(current => ({ ...current, category: event.target.value as TeamProfile['category'] }))}>{(['Core Team', 'Team Leads', 'Team Members', 'Advisory Council'] as const).map(group => <option key={group}>{group}</option>)}</select></label>
       <div className="a-form-row"><label>Visibility<select value={value.status} onChange={event => setValue(current => ({ ...current, status: event.target.value as TeamProfile['status'] }))}><option value="draft">Draft - hidden from website</option><option value="published">Published - visible on website</option></select></label><label>Display order<input required type="number" min={0} max={999} value={value.order} onChange={event => setValue(current => ({ ...current, order: Number(event.target.value) }))}/></label></div>
-    </div><ImageField optional value={value.image} alt={value.alt} onChange={image => setValue(current => ({ ...current, image, alt: current.alt || (image ? current.title : '') }))} onAlt={alt => setValue(current => ({ ...current, alt }))} onUploading={change => setUploading(count => count + change)}/></div></fieldset>
+    </div><ImageField optional enableCrop cropAspect={1} value={value.image} alt={value.alt} onChange={image => setValue(current => ({ ...current, image, alt: current.alt || (image ? current.title : '') }))} onAlt={alt => setValue(current => ({ ...current, alt }))} onUploading={change => setUploading(count => count + change)}/></div></fieldset>
     <div className="a-form-actions"><button type="button" className="a-button secondary" disabled={saving || uploading > 0} onClick={onCancel}>Cancel</button><button className="a-button primary" disabled={saving || uploading > 0}><Save size={16}/>{uploading ? 'Uploading...' : saving ? 'Saving...' : 'Save team member'}</button></div>
   </form>
 }
