@@ -40,8 +40,18 @@ export default function Team() {
           <div className="grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 sm:gap-x-7 sm:gap-y-11 lg:grid-cols-4">
           {profiles.map(member => (
             <article key={member.id} className="min-w-0">
-              <div className="aspect-square overflow-hidden rounded-sm bg-[#F0F3F5] px-3 pt-3 sm:px-5 sm:pt-5">
-                {member.image ? <SiteImage src={contentImage(member.image)} alt={member.alt || member.title} className="h-full w-full object-cover"/> : <ProfileIcon />}
+              <div className="aspect-square overflow-hidden rounded-sm bg-[#F0F3F5]">
+                {member.image ? (
+                  <SiteImage
+                    src={contentImage(member.image)}
+                    alt={member.alt || member.title}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center p-4">
+                    <ProfileIcon />
+                  </div>
+                )}
               </div>
               <div className="mt-4 border-b border-white/15 pb-4">
                 <h3 className="text-sm font-extrabold leading-6 text-white sm:text-base">{member.title}</h3>
