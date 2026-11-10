@@ -7,7 +7,7 @@ import { partners } from '../data/partners'
 
 export default function Partners() {
   const { data, error, retry } = useContent<Partner[]>('/content/partners')
-  const visible = (data ?? partners).filter(partner => partner.status === 'published' && partner.image)
+  const visible = (data && data.length ? data : partners).filter(partner => partner.status === 'published' && partner.image)
   return <main className="inner-page partners-page">
     <Container>
       <header className="page-intro"><h1>Our partners</h1></header>
