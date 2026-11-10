@@ -15,32 +15,11 @@ import AnalyticsPanel from './AnalyticsPanel'
 import AdminManagement from './AdminManagement'
 import AuditLogs from './AuditLogs'
 import AdminSettings from './AdminSettings'
+import LanguageSwitcher from './LanguageSwitcher'
+import { I18nProvider, useI18n } from './i18n'
 import './admin.css'
 
 type Editor = { kind: 'outreach'; record?: Outreach } | { kind: 'volunteer'; record?: Volunteer } | { kind: 'donation'; record?: Donation }
-const navigation = [
-  { section: 'WORKSPACE', items: [
-    { path: '', label: 'Overview', icon: LayoutDashboard },
-    { path: 'analytics', label: 'Analytics', icon: Activity },
-    { path: 'outreaches', label: 'Outreaches', icon: Eye },
-    { path: 'programs', label: 'Programs', icon: BookOpen },
-    { path: 'news', label: 'News & stories', icon: BookOpen },
-  ] },
-  { section: 'OUR COMMUNITY', items: [
-    { path: 'team', label: 'Team', icon: Users },
-    { path: 'partners', label: 'Partners', icon: HandHeart },
-    { path: 'volunteers', label: 'Volunteers', icon: Users },
-    { path: 'donations', label: 'Donations', icon: HandHeart },
-    { path: 'messages', label: 'Messages', icon: Mail },
-    { path: 'subscribers', label: 'Subscribers', icon: Users },
-  ] },
-  { section: 'ADMINISTRATION', items: [
-    { path: 'reports', label: 'Reports', icon: Activity },
-    { path: 'admins', label: 'Administrators', icon: ShieldCheck },
-    { path: 'audit-logs', label: 'Audit logs', icon: BookOpen },
-    { path: 'settings', label: 'Settings', icon: Settings },
-  ] },
-]
 const titles: Record<string, [string, string]> = {
   '': ['Overview', ''], outreaches: ['Outreaches', ''], programs: ['Programs', ''], news: ['News & stories', ''], team: ['Team', ''], partners: ['Partners', ''],
   volunteers: ['Volunteers', ''], donations: ['Donations', ''], messages: ['Messages', ''],
@@ -82,6 +61,7 @@ function RecordEditor({ editor, onClose, onSave, saving }: { editor: Editor; onC
 }
 
 function ImpactChart({ outreaches, period, setPeriod }: { outreaches: Outreach[]; period: string; setPeriod: (value: string) => void }) {
+  const { t, lang } = useI18n()
   const chartPrograms = [...new Set([...programNames, ...outreaches.map(record => record.program)])]
   const dates = outreaches.map(o => o.date.slice(0, 7)).sort()
   const latest = dates[dates.length - 1] || todayInGhana().slice(0, 7)
@@ -90,17 +70,19 @@ function ImpactChart({ outreaches, period, setPeriod }: { outreaches: Outreach[]
   const current = new Date(`${todayInGhana().slice(0, 7)}-01T12:00:00Z`)
   if (end > current) end.setTime(current.getTime())
   const length = Number(period)
+  const monthLocale = lang === 'fr' ? 'fr-FR' : lang === 'es' ? 'es-ES' : 'en-GB'
   const months = Array.from({ length }, (_, i) => {
     const d = new Date(end); d.setUTCMonth(end.getUTCMonth() - length + i + 1)
     const key = d.toISOString().slice(0, 7)
-    return { key, label: d.toLocaleDateString('en-GB', { month: 'short', timeZone: 'Africa/Accra' }), counts: chartPrograms.map(p => outreaches.filter(o => o.status === 'Completed' && o.program === p && o.date.startsWith(key)).reduce((sum, o) => sum + o.screened, 0)) }
+    return { key, label: d.toLocaleDateString(monthLocale, { month: 'short', timeZone: 'Africa/Accra' }), counts: chartPrograms.map(p => outreaches.filter(o => o.status === 'Completed' && o.program === p && o.date.startsWith(key)).reduce((sum, o) => sum + o.screened, 0)) }
   })
   const total = months.reduce((sum, m) => sum + m.counts.reduce((s, c) => s + c, 0), 0)
   const maximum = Math.max(100, Math.ceil(Math.max(...months.map(m => m.counts.reduce((s, c) => s + c, 0))) / 100) * 100)
-  return <section className="a-panel a-impact"><div className="a-panel-heading"><div><h2>People screened <span className="a-live-dot"/></h2></div><label className="a-select"><span className="sr-only">Chart period</span><select value={period} onChange={e => setPeriod(e.target.value)}><option value="6">Last 6 months</option><option value="3">Last 3 months</option><option value="12">Last 12 months</option></select></label></div><div className="a-chart-summary"><strong>{total.toLocaleString()}</strong><span>people reached <span className="a-chart-year">/ {months[0].key.slice(0, 4)}{months[0].key.slice(0, 4) !== months[months.length - 1]?.key.slice(0, 4) ? `–${months[months.length - 1]?.key.slice(0, 4)}` : ''}</span></span></div><div className="a-chart" role="img" aria-label={`People screened: ${months.map(m => `${m.label} ${m.key.slice(0, 4)}: ${m.counts.reduce((s, c) => s + c, 0)}`).join('; ')}`}><div className="a-chart-axis">{[maximum, maximum * .75, maximum * .5, maximum * .25, 0].map(t => <span key={t}>{t}</span>)}</div><div className="a-chart-plot"><div className="a-chart-grid">{[0, 1, 2, 3, 4].map(i => <i key={i}/>)}</div><div className="a-bars">{months.map(m => <div className="a-bar-column" key={m.key}><div className="a-bar-stack" title={`${m.label}: ${m.counts.reduce((s, c) => s + c, 0)} people`}>{m.counts.map((c, i) => <div key={i} className={`a-bar-segment program-${i % 3}`} style={{ height: `${c / maximum * 100}%` }}/>)}</div><span>{m.label}</span></div>)}</div></div></div><div className="a-chart-legend">{chartPrograms.map((p, i) => <span key={p}><i className={`program-${i % 3}`}/>{p}</span>)}</div></section>
+  return <section className="a-panel a-impact"><div className="a-panel-heading"><div><h2>{t('peopleScreened')} <span className="a-live-dot"/></h2></div><label className="a-select"><span className="sr-only">{t('chartPeriod')}</span><select value={period} onChange={e => setPeriod(e.target.value)}><option value="6">{t('last6Months')}</option><option value="3">{t('last3Months')}</option><option value="12">{t('last12Months')}</option></select></label></div><div className="a-chart-summary"><strong>{total.toLocaleString()}</strong><span>{t('peopleReached')} <span className="a-chart-year">/ {months[0].key.slice(0, 4)}{months[0].key.slice(0, 4) !== months[months.length - 1]?.key.slice(0, 4) ? `–${months[months.length - 1]?.key.slice(0, 4)}` : ''}</span></span></div><div className="a-chart" role="img" aria-label={`${t('peopleScreened')}: ${months.map(m => `${m.label} ${m.key.slice(0, 4)}: ${m.counts.reduce((s, c) => s + c, 0)}`).join('; ')}`}><div className="a-chart-axis">{[maximum, maximum * .75, maximum * .5, maximum * .25, 0].map(t => <span key={t}>{t}</span>)}</div><div className="a-chart-plot"><div className="a-chart-grid">{[0, 1, 2, 3, 4].map(i => <i key={i}/>)}</div><div className="a-bars">{months.map(m => <div className="a-bar-column" key={m.key}><div className="a-bar-stack" title={`${m.label}: ${m.counts.reduce((s, c) => s + c, 0)} people`}>{m.counts.map((c, i) => <div key={i} className={`a-bar-segment program-${i % 3}`} style={{ height: `${c / maximum * 100}%` }}/>)}</div><span>{m.label}</span></div>)}</div></div></div><div className="a-chart-legend">{chartPrograms.map((p, i) => <span key={p}><i className={`program-${i % 3}`}/>{p}</span>)}</div></section>
 }
 
-export default function AdminDashboard({ adminEmail, adminName = '', onProfileSaved, onLogout }: { adminEmail: string; adminName?: string; onProfileSaved: (name: string) => void; onLogout: () => Promise<void> }) {
+function AdminDashboardInner({ adminEmail, adminName = '', onProfileSaved, onLogout }: { adminEmail: string; adminName?: string; onProfileSaved: (name: string) => void; onLogout: () => Promise<void> }) {
+  const { t, formatDate, lang } = useI18n()
   const location = useLocation()
   const navigate = useNavigate()
   const requestedSection = location.pathname.replace(/^\/admin\/?/, '').replace(/\/$/, '')
@@ -132,8 +114,32 @@ export default function AdminDashboard({ adminEmail, adminName = '', onProfileSa
   const selectedMessage = workspace.messages.find(m => m.id === messageId)
   const lastActivity = useRef('')
   const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Accra', hour: 'numeric', hourCycle: 'h23' }).format(clock))
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  const greeting = hour < 12 ? t('goodMorning') : hour < 17 ? t('goodAfternoon') : t('goodEvening')
   const displayName = adminName.trim().split(/\s+/)[0] || 'Admin'
+
+  const navigation = [
+    { section: t('navSectionWorkspace'), items: [
+      { path: '', label: t('overview'), icon: LayoutDashboard },
+      { path: 'analytics', label: t('analytics'), icon: Activity },
+      { path: 'outreaches', label: t('outreaches'), icon: Eye },
+      { path: 'programs', label: t('programs'), icon: BookOpen },
+      { path: 'news', label: t('news'), icon: BookOpen },
+    ] },
+    { section: t('navSectionCommunity'), items: [
+      { path: 'team', label: t('team'), icon: Users },
+      { path: 'partners', label: t('partners'), icon: HandHeart },
+      { path: 'volunteers', label: t('volunteers'), icon: Users },
+      { path: 'donations', label: t('donations'), icon: HandHeart },
+      { path: 'messages', label: t('messages'), icon: Mail },
+      { path: 'subscribers', label: t('subscribers'), icon: Users },
+    ] },
+    { section: t('navSectionAdmin'), items: [
+      { path: 'reports', label: t('reports'), icon: Activity },
+      { path: 'admins', label: t('admins'), icon: ShieldCheck },
+      { path: 'audit-logs', label: t('auditLogs'), icon: BookOpen },
+      { path: 'settings', label: t('settings'), icon: Settings },
+    ] },
+  ]
 
   useEffect(() => { const timer = setInterval(() => setClock(new Date()), 60000); return () => clearInterval(timer) }, [])
 
@@ -167,7 +173,7 @@ export default function AdminDashboard({ adminEmail, adminName = '', onProfileSa
     window.addEventListener('focus', onFocus)
     return () => { clearInterval(timer); window.removeEventListener('focus', onFocus) }
   }, [refresh])
-  useEffect(() => { setMobileOpen(false); setQuery(''); setPage(1); setFilter('All statuses'); document.title = `${navigation.flatMap(n => n.items).find(n => n.path === section)?.label || 'Overview'} | Arc Admin` }, [section])
+  useEffect(() => { setMobileOpen(false); setQuery(''); setPage(1); setFilter('All statuses'); document.title = `${navigation.flatMap(n => n.items).find(n => n.path === section)?.label || t('overview')} | Arc Admin` }, [section, lang])
   useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(''), 5500); return () => clearTimeout(timer) }, [toast])
   useEffect(() => { if (!mobileOpen) return; const close = (event: KeyboardEvent) => { if (event.key === 'Escape') setMobileOpen(false) }; document.addEventListener('keydown', close); return () => document.removeEventListener('keydown', close) }, [mobileOpen])
 
@@ -236,14 +242,14 @@ export default function AdminDashboard({ adminEmail, adminName = '', onProfileSa
   }
 
   return <div className="arc-admin">
-    <a href="#admin-content" className="a-skip">Skip to content</a>
-    {mobileOpen && <button className="a-mobile-shade" aria-label="Close navigation" onClick={() => setMobileOpen(false)}/>}
-    <aside className={`a-sidebar ${mobileOpen ? 'is-open' : ''}`} aria-label="Admin sidebar"><Link className="a-brand" to="/admin" aria-label="Arc Optical Club admin overview"><BrandLogo variant="white"/><span>THE IMPACT WORKSPACE</span></Link><button className="a-mobile-close a-icon-button" aria-label="Close navigation" onClick={() => setMobileOpen(false)}><X size={20}/></button><nav aria-label="Admin navigation">{navigation.map(group => <div className="a-nav-group" key={group.section}><p>{group.section}</p>{group.items.map(({ path, label, icon: Icon }) => <NavLink key={path} to={`/admin${path ? `/${path}` : ''}`} end className={({ isActive }) => `a-nav-link ${isActive ? 'active' : ''}`}><Icon size={19} strokeWidth={1.8}/><span>{label}</span>{path === 'messages' && unread > 0 && <b>{unread}</b>}{path === 'volunteers' && pending > 0 && <i className="a-nav-indicator"/>}</NavLink>)}</div>)}</nav><div className="a-sidebar-bottom"><button className="a-profile" onClick={() => navigate('/admin/settings')}><span className="a-avatar">AC<span/></span><span><strong>Arc Administrator</strong><small>Workspace admin</small></span><ChevronDown size={15}/></button></div></aside>
-    <div className="a-main"><header className="a-topbar"><div className="a-breadcrumb"><button className="a-menu a-icon-button" aria-label="Open navigation" aria-expanded={mobileOpen} onClick={() => setMobileOpen(true)}><Menu size={22}/></button><span>Workspace</span><ChevronRight size={13}/><strong>{navigation.flatMap(n => n.items).find(n => n.path === section)?.label || 'Overview'}</strong></div><div className="a-topbar-actions"><span className="a-ghana"><span>🇬🇭</span> Ghana</span><span className="a-topbar-divider"/><Link to="/" className="a-visit" target="_blank" rel="noreferrer">View website <ArrowUpRight size={14}/></Link><button className="a-notifications a-icon-button" aria-label={`${unread} unread messages`} onClick={() => navigate('/admin/messages')}><Bell size={20}/>{unread > 0 && <i/>}</button><button className="a-top-avatar" aria-label="Workspace settings" onClick={() => navigate('/admin/settings')}>AC</button></div></header>
+    <a href="#admin-content" className="a-skip">{t('skipToContent')}</a>
+    {mobileOpen && <button className="a-mobile-shade" aria-label={t('closeNav')} onClick={() => setMobileOpen(false)}/>}
+    <aside className={`a-sidebar ${mobileOpen ? 'is-open' : ''}`} aria-label="Admin sidebar"><Link className="a-brand" to="/admin" aria-label="Arc Optical Club admin overview"><BrandLogo variant="white"/><span>{t('impactWorkspace')}</span></Link><button className="a-mobile-close a-icon-button" aria-label={t('closeNav')} onClick={() => setMobileOpen(false)}><X size={20}/></button><nav aria-label="Admin navigation">{navigation.map(group => <div className="a-nav-group" key={group.section}><p>{group.section}</p>{group.items.map(({ path, label, icon: Icon }) => <NavLink key={path} to={`/admin${path ? `/${path}` : ''}`} end className={({ isActive }) => `a-nav-link ${isActive ? 'active' : ''}`}><Icon size={19} strokeWidth={1.8}/><span>{label}</span>{path === 'messages' && unread > 0 && <b>{unread}</b>}{path === 'volunteers' && pending > 0 && <i className="a-nav-indicator"/>}</NavLink>)}</div>)}</nav><div className="a-sidebar-bottom"><button className="a-profile" onClick={() => navigate('/admin/settings')}><span className="a-avatar">AC<span/></span><span><strong>{displayName || t('adminRole')}</strong><small>{t('adminSubrole')}</small></span><ChevronDown size={15}/></button></div></aside>
+    <div className="a-main"><header className="a-topbar"><div className="a-breadcrumb"><button className="a-menu a-icon-button" aria-label={t('openNav')} aria-expanded={mobileOpen} onClick={() => setMobileOpen(true)}><Menu size={22}/></button><span>{t('workspace')}</span><ChevronRight size={13}/><strong>{navigation.flatMap(n => n.items).find(n => n.path === section)?.label || t('overview')}</strong></div><div className="a-topbar-actions"><LanguageSwitcher onSelect={() => setToast(t('languageChanged'))} /><span className="a-topbar-divider"/><Link to="/" className="a-visit" target="_blank" rel="noreferrer">{t('viewWebsite')} <ArrowUpRight size={14}/></Link><button className="a-notifications a-icon-button" aria-label={`${unread} ${t('messages')}`} onClick={() => navigate('/admin/messages')}><Bell size={20}/>{unread > 0 && <i/>}</button><button className="a-top-avatar" aria-label={t('workspaceSettings')} onClick={() => navigate('/admin/settings')}>AC</button></div></header>
     <main id="admin-content" className="a-content">{section === '' ? <>
-      <div className="a-page-heading a-overview-heading"><div><h1>{greeting}, {displayName}</h1><p>{connection === 'ready' ? <>You have <strong>{scheduled.filter(o => o.date >= today).length} upcoming outreach{scheduled.filter(o => o.date >= today).length === 1 ? '' : 'es'}</strong> and {pending} volunteer application{pending === 1 ? '' : 's'} to review.</> : 'Your people, programs and community at a glance.'}</p></div><div className="a-overview-actions"><span className="a-overview-date"><CalendarDays size={16}/>{clock.toLocaleDateString('en-GB', { timeZone: 'Africa/Accra', weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })}</span><button className="a-button secondary" disabled={syncing} onClick={() => { void refresh() }}><Activity size={16}/>{syncing ? 'Syncing...' : 'Sync live data'}</button><button className="a-button primary" onClick={() => setEditor({ kind: 'outreach' })}><Plus size={16}/>New outreach</button></div></div>
-      <section className="a-welcome" aria-labelledby="admin-welcome-title"><SiteImage className="a-welcome-photo" src="/images/arc-eye-screening-hero.png" alt=""/><div className="a-welcome-shade"/><div className="a-welcome-copy"><h2 id="admin-welcome-title">Welcome back</h2><p>Your outreach, volunteers and impact at a glance.</p><span className={`a-welcome-status ${connection}`} role="status"><i/>{connection === 'ready' ? <>Live data active &middot; Updated {lastSynced?.toLocaleTimeString('en-GB', { timeZone: 'Africa/Accra', hour: 'numeric', minute: '2-digit', hour12: true })}</> : connection === 'error' ? 'Connection interrupted' : 'Connecting to your workspace...'}</span></div><div className="a-welcome-actions"><Link to="/admin/outreaches" className="a-button a-welcome-primary"><CalendarDays size={16}/>Manage outreaches</Link><Link to="/admin/volunteers" className="a-button a-welcome-secondary"><Users size={16}/>Volunteers</Link></div></section>
-    </> : <div className="a-page-heading a-section-heading"><h1>{titles[section][0]}</h1></div>}
+      <div className="a-page-heading a-overview-heading"><div><h1>{greeting}, {displayName}</h1><p>{connection === 'ready' ? <>{t('youHave')} <strong>{scheduled.filter(o => o.date >= today).length} {scheduled.filter(o => o.date >= today).length === 1 ? t('upcomingOutreaches') : t('upcomingOutreachesPlural')}</strong> {t('and')} {pending} {pending === 1 ? t('volunteerApplications') : t('volunteerApplicationsPlural')} {t('toReview')}</> : t('overviewSub')}</p></div><div className="a-overview-actions"><span className="a-overview-date"><CalendarDays size={16}/>{formatDate(clock, { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })}</span><button className="a-button secondary" disabled={syncing} onClick={() => { void refresh() }}><Activity size={16}/>{syncing ? t('syncing') : t('syncLiveData')}</button><button className="a-button primary" onClick={() => setEditor({ kind: 'outreach' })}><Plus size={16}/>{t('newOutreach')}</button></div></div>
+      <section className="a-welcome" aria-labelledby="admin-welcome-title"><SiteImage className="a-welcome-photo" src="/images/arc-eye-screening-hero.png" alt=""/><div className="a-welcome-shade"/><div className="a-welcome-copy"><h2 id="admin-welcome-title">{t('welcomeBack')}</h2><p>{t('overviewSub')}</p><span className={`a-welcome-status ${connection}`} role="status"><i/>{connection === 'ready' ? <>{t('liveDataActive')} &middot; {t('updated')} {formatDate(lastSynced || clock, { hour: 'numeric', minute: '2-digit', hour12: true })}</> : connection === 'error' ? t('connectionInterrupted') : t('connecting')}</span></div><div className="a-welcome-actions"><Link to="/admin/outreaches" className="a-button a-welcome-primary"><CalendarDays size={16}/>{t('manageOutreaches')}</Link><Link to="/admin/volunteers" className="a-button a-welcome-secondary"><Users size={16}/>{t('volunteers')}</Link></div></section>
+    </> : <div className="a-page-heading a-section-heading"><h1>{navigation.flatMap(n => n.items).find(n => n.path === section)?.label || titles[section][0]}</h1></div>}
 
 
 
@@ -251,16 +257,16 @@ export default function AdminDashboard({ adminEmail, adminName = '', onProfileSa
     {(section === '' || section === 'reports') && <>
       <div className="a-stats">
         {[
-          { label: 'People screened', value: screened.toLocaleString(), note: `${completed} completed screening visits`, icon: Eye, color: 'blue', path: 'outreaches' },
-          { label: 'Active volunteers', value: active.toString().padStart(2, '0'), note: `${pending} applications to review`, icon: Users, color: 'teal', path: 'volunteers' },
-          { label: 'Donations received', value: money(received), note: `${workspace.donations.filter(d => d.status === 'Received').length} contributions making a difference`, icon: HandHeart, color: 'gold', path: 'donations' },
-          { label: 'Planned outreaches', value: scheduled.length.toString().padStart(2, '0'), note: `${scheduled.reduce((s, o) => s + o.target, 0)} people we aim to reach`, icon: CalendarDays, color: 'violet', path: 'outreaches' },
+          { label: t('peopleScreened'), value: screened.toLocaleString(), note: `${completed} ${t('completedVisits')}`, icon: Eye, color: 'blue', path: 'outreaches' },
+          { label: t('activeVolunteers'), value: active.toString().padStart(2, '0'), note: `${pending} ${t('volunteerApplicationsPlural')} ${t('toReview')}`, icon: Users, color: 'teal', path: 'volunteers' },
+          { label: t('donationsReceived'), value: money(received), note: `${workspace.donations.filter(d => d.status === 'Received').length} contributions`, icon: HandHeart, color: 'gold', path: 'donations' },
+          { label: t('plannedOutreaches'), value: scheduled.length.toString().padStart(2, '0'), note: `${scheduled.reduce((s, o) => s + o.target, 0)} ${t('aimToReach')}`, icon: CalendarDays, color: 'violet', path: 'outreaches' },
         ].map(({ label, value, note, icon: Icon, color, path }) => <Link to={`/admin/${path}`} className={`a-stat ${color}`} key={label}><div className="a-stat-top"><span>{label}</span><span className="a-stat-icon"><Icon size={20} strokeWidth={1.7}/></span></div><strong>{value}</strong><span className="a-stat-note"><span/>{note}</span></Link>)}
       </div>
       <div className={`a-middle-grid a-middle-overview`}><ImpactChart outreaches={workspace.outreaches} period={period} setPeriod={setPeriod}/></div>
     </>}
 
-    {section === '' && <><div className="a-lower-grid"><section className="a-panel a-outreach-panel"><div className="a-panel-heading"><div><h2>Upcoming outreaches <span className="a-count">{scheduled.length}</span></h2></div><Link className="a-text-link" to="/admin/outreaches">View all <ArrowRight size={14}/></Link></div>{outreachTable(true)}</section><section className="a-panel a-attention"><div className="a-panel-heading"><div><h2>Needs attention</h2></div><Sparkles size={18}/></div><Link to="/admin/volunteers"><span className="a-action-icon tint-1"><Users size={18}/></span><span><strong>Volunteer applications</strong><small>{pending} applications awaiting review</small></span><ChevronRight size={16}/></Link><Link to="/admin/messages"><span className="a-action-icon tint-0"><Mail size={18}/></span><span><strong>Unread messages</strong><small>{unread} unread messages in your inbox</small></span><ChevronRight size={16}/></Link><Link to="/admin/donations"><span className="a-action-icon tint-2"><Heart size={18}/></span><span><strong>Pledged donations</strong><small>{money(workspace.donations.filter(d => d.status === 'Pledged').reduce((s, d) => s + d.amount, 0))} in support pledged</small></span><ChevronRight size={16}/></Link></section></div></>}
+    {section === '' && <><div className="a-lower-grid"><section className="a-panel a-outreach-panel"><div className="a-panel-heading"><div><h2>{t('upcomingOutreachesPlural')} <span className="a-count">{scheduled.length}</span></h2></div><Link className="a-text-link" to="/admin/outreaches">{t('viewAll')} <ArrowRight size={14}/></Link></div>{outreachTable(true)}</section><section className="a-panel a-attention"><div className="a-panel-heading"><div><h2>{t('needsAttention')}</h2></div><Sparkles size={18}/></div><Link to="/admin/volunteers"><span className="a-action-icon tint-1"><Users size={18}/></span><span><strong>{t('volunteerApplicationsPlural')}</strong><small>{pending} {t('volunteerApplicationsPlural')} {t('toReview')}</small></span><ChevronRight size={16}/></Link><Link to="/admin/messages"><span className="a-action-icon tint-0"><Mail size={18}/></span><span><strong>{t('messages')}</strong><small>{unread} {t('messages').toLowerCase()}</small></span><ChevronRight size={16}/></Link><Link to="/admin/donations"><span className="a-action-icon tint-2"><Heart size={18}/></span><span><strong>{t('pledgedDonations')}</strong><small>{money(workspace.donations.filter(d => d.status === 'Pledged').reduce((s, d) => s + d.amount, 0))} in support pledged</small></span><ChevronRight size={16}/></Link></section></div></>}
 
     {(section === '' || section === 'analytics') && <AnalyticsPanel compact={section === ''}/>}
     {section === 'admins' && <AdminManagement adminEmail={adminEmail}/>}
@@ -289,6 +295,14 @@ export default function AdminDashboard({ adminEmail, adminName = '', onProfileSa
     {selectedMessage && <Modal title={selectedMessage.subject} description={`${selectedMessage.name} · ${shortDate(selectedMessage.date)}, ${selectedMessage.date.slice(0, 4)}`} onClose={() => setMessageId(null)}><div className="a-help-content"><p className="a-message-contact">{selectedMessage.email}<br/>{selectedMessage.phone}{selectedMessage.company && <><br/>{selectedMessage.company}</>}</p><p className="a-message-body">{selectedMessage.message}</p>{selectedMessage.email && <a className="a-button secondary" href={`mailto:${selectedMessage.email}?subject=${encodeURIComponent('Re: ' + selectedMessage.subject)}`}>Reply by email <ArrowUpRight size={15}/></a>}<button className="a-button primary" onClick={() => setMessageId(null)}>Done <Check size={16}/></button></div></Modal>}
     {toast && <div className="a-toast" role="status"><Check size={18}/><span>{toast}</span><button aria-label="Dismiss notification" onClick={() => setToast('')}><X size={15}/></button></div>}
   </div>
+}
+
+export default function AdminDashboard(props: { adminEmail: string; adminName?: string; onProfileSaved: (name: string) => void; onLogout: () => Promise<void> }) {
+  return (
+    <I18nProvider>
+      <AdminDashboardInner {...props} />
+    </I18nProvider>
+  )
 }
 
 function Empty({ text }: { text: string }) { return <div className="a-empty"><Search size={25}/><h3>{text}</h3></div> }

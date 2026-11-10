@@ -120,7 +120,13 @@ export default function Navbar() {
           to="/"
           aria-label="Arc Optical Club home"
           className={`order-1 relative inline-flex shrink-0 items-center lg:order-none ${brandLogoSize}`}
-          onClick={closeMenus}
+          onClick={(e) => {
+            closeMenus()
+            if (pathname === '/') {
+              e.preventDefault()
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }
+          }}
         >
           <BrandLogo
             variant="light"

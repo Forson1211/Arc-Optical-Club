@@ -243,8 +243,10 @@ export function DonateFeature() {
   return (
     <section id="give-the-gift-of-sight" className="pb-24 lg:bg-arc-yellow lg:pb-0">
       <Container>
-        <div className="relative overflow-hidden rounded-[2rem] bg-arc-yellow px-8 py-14 text-arc-navy sm:px-14 sm:py-16 lg:rounded-none lg:px-0">
-          <div className="absolute -right-12 -top-24 h-72 w-72 rounded-full border-[35px] border-arc-navy/5" aria-hidden="true" />
+        <div className="relative overflow-hidden rounded-[2rem] bg-arc-yellow px-8 py-14 text-arc-navy sm:px-14 sm:py-16 lg:rounded-none lg:px-0 lg:py-20">
+          <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 sm:right-8 lg:right-12 xl:right-20" aria-hidden="true">
+            <div className="h-64 w-64 rounded-full border-[30px] border-arc-navy/5 sm:h-72 sm:w-72 lg:h-80 lg:w-80 xl:h-96 xl:w-96 lg:border-[36px]" />
+          </div>
           <div className="relative max-w-2xl text-center sm:text-left">
             <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-arc-navy">Give the gift of sight</p>
             <h2 className="mt-4 text-3xl font-extrabold tracking-[-0.05em] sm:text-5xl">Help bring clearer vision within reach.</h2>

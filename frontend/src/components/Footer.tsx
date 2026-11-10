@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent, SVGProps } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ChevronDown, Instagram } from 'lucide-react'
 import Container from './Container'
 import BrandLogo, { brandLogoSize } from './BrandLogo'
@@ -63,6 +63,7 @@ const socialLinks = [
 ]
 
 export default function Footer() {
+  const { pathname } = useLocation()
   const [expanded, setExpanded] = useState<string | null>(null)
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
@@ -150,7 +151,17 @@ export default function Footer() {
       <Container>
         {/* Top Branding & Social Media Row (Clean: Logo on left, Social Icons on right) */}
         <div className="flex items-center justify-between gap-3 border-b border-white/15 py-7 sm:py-8">
-          <Link to="/" aria-label="Arc Optical Club home" className="inline-flex shrink-0">
+          <Link
+            to="/"
+            aria-label="Arc Optical Club home"
+            className="inline-flex shrink-0"
+            onClick={(e) => {
+              if (pathname === '/') {
+                e.preventDefault()
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }
+            }}
+          >
             <BrandLogo className={`h-auto ${brandLogoSize}`} />
           </Link>
 

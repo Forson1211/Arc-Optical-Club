@@ -14,7 +14,7 @@ const impact = [
 export default function Home() {
   return (
     <main>
-      <section className="home-hero" aria-labelledby="hero-heading">
+      <section id="hero" className="home-hero" aria-labelledby="hero-heading">
         <HeroBackground />
         <div className="home-hero-shade" aria-hidden="true" />
 
