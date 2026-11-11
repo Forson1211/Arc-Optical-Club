@@ -1,7 +1,7 @@
 import { createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto'
 import { promisify } from 'node:util'
 import type { Request, Response, NextFunction, CookieOptions } from 'express'
-import { deleteRecords, findRecord, HttpError, insertRecord, updateRecord } from './store.js'
+import { deleteRecords, findRecord, HttpError, insertRecord, listRecords, updateRecord } from './store.js'
 import type { RecordData } from './store.js'
 
 const scrypt = promisify(scryptCallback)
@@ -43,6 +43,31 @@ export async function changeAdminPassword(id: string, currentPassword: string, n
   await deleteRecords('adminsessions', 'userId', id)
   // Rotate this browser's session too. Other devices must sign in again.
   return authenticate(String(user.email), newPassword)
+}
+
+export async function resetAdminPassword(id: string, newPassword: string) {
+  const user = await findRecord('adminusers', 'id', id)
+  if (!user) throw new HttpError(404, 'Administrator not found.')
+  if (newPassword.length < 12 || newPassword.length > 256) throw new HttpError(400, 'Use a password between 12 and 256 characters.')
+  const salt = randomBytes(24).toString('hex')
+  const passwordHash = (await scrypt(newPassword, salt, 64) as Buffer).toString('hex')
+  await updateRecord('adminusers', id, { salt, passwordHash, authVersion: randomBytes(24).toString('hex'), passwordChangedAt: new Date().toISOString() })
+  await deleteRecords('adminsessions', 'userId', id)
+  return user
+}
+
+export async function deleteAdminUser(currentAdminId: string, targetAdminId: string) {
+  const admins = await listRecords('adminusers')
+  if (admins.length <= 1) {
+    throw new HttpError(400, 'Cannot delete the only administrator. At least one administrator account must exist.')
+  }
+  const target = admins.find(a => a.id === targetAdminId)
+  if (!target) {
+    throw new HttpError(404, 'Administrator not found.')
+  }
+  await deleteRecords('adminusers', 'id', targetAdminId)
+  await deleteRecords('adminsessions', 'userId', targetAdminId)
+  return { deleted: target, wasSelf: currentAdminId === targetAdminId }
 }
 
 export function cookieOptions(): CookieOptions {

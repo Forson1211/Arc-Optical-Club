@@ -1,7 +1,7 @@
 import { raw, Router } from 'express'
 import rateLimit from 'express-rate-limit'
 import { z } from 'zod'
-import { authenticate, changeAdminPassword, cookieOptions, createAdmin, endSession, requireAdmin, sessionCookie } from '../lib/auth.js'
+import { authenticate, changeAdminPassword, cookieOptions, createAdmin, deleteAdminUser, endSession, requireAdmin, resetAdminPassword, sessionCookie } from '../lib/auth.js'
 import { adminActivitySchema, auditQuerySchema, getAuditLogs, writeAudit } from '../lib/activity.js'
 import { getAnalytics } from '../lib/analytics.js'
 import { donationSchema, email, outreachSchema, volunteerSchema } from '../lib/validation.js'
@@ -74,6 +74,52 @@ export function adminRoutes(allowedOrigins: string[]) {
       if (!parsed.success) { res.status(400).json({ success: false, message: parsed.error.issues[0]?.message || 'Check the account details.' }); return }
       const user = await createAdmin(parsed.data.email, parsed.data.password, { name: parsed.data.name, createdBy: res.locals.admin.id })
       res.status(201).json({ success: true, data: publicAdmin(user) })
+    } catch (error) { next(error) }
+  })
+  router.delete('/admins/:id', async (req, res, next) => {
+    try {
+      const targetId = String(req.params.id)
+      const result = await deleteAdminUser(res.locals.admin.id, targetId)
+      await writeAudit({
+        eventKey: `admin-delete:${targetId}:${Date.now()}`,
+        action: 'admin.delete_user',
+        category: 'security',
+        description: `Deleted administrator ${result.deleted.email} (${result.deleted.name || 'unnamed'})`,
+        actorType: 'admin',
+        actorId: res.locals.admin.id,
+        actorEmail: res.locals.admin.email,
+        source: 'browser',
+        outcome: 'success',
+        path: '/admin/admins',
+        resourceId: targetId,
+      })
+      if (result.wasSelf) {
+        const { maxAge: _maxAge, ...options } = cookieOptions()
+        res.clearCookie(sessionCookie, options)
+      }
+      res.json({ success: true, data: { id: targetId, wasSelf: result.wasSelf } })
+    } catch (error) { next(error) }
+  })
+  router.post('/admins/:id/password', async (req, res, next) => {
+    try {
+      const parsed = z.object({ newPassword: z.string().min(12, 'Use at least 12 characters for the password.').max(256) }).safeParse(req.body)
+      if (!parsed.success) { res.status(400).json({ success: false, message: parsed.error.issues[0]?.message || 'Invalid password.' }); return }
+      const targetId = String(req.params.id)
+      const user = await resetAdminPassword(targetId, parsed.data.newPassword)
+      await writeAudit({
+        eventKey: `admin-pw-reset:${targetId}:${Date.now()}`,
+        action: 'admin.reset_password',
+        category: 'security',
+        description: `Updated password for administrator ${user.email}`,
+        actorType: 'admin',
+        actorId: res.locals.admin.id,
+        actorEmail: res.locals.admin.email,
+        source: 'browser',
+        outcome: 'success',
+        path: '/admin/admins',
+        resourceId: targetId,
+      })
+      res.json({ success: true, message: `Password updated for ${user.email}. Other devices have been signed out.` })
     } catch (error) { next(error) }
   })
   router.get('/analytics', async (req, res, next) => {

@@ -980,6 +980,45 @@
   background: #f7fbfd
 }
 
+.a-button.danger {
+  background: #dc2626;
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 3px 6px rgba(220, 38, 38, 0.15);
+}
+
+.a-button.danger:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.25);
+}
+
+.a-button.danger-text {
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.a-button.danger-text:hover {
+  border-color: #f87171;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.a-btn-sm {
+  padding: 6px 11px;
+  font-size: 13px;
+  min-height: 32px;
+  gap: 5px;
+  border-radius: 6px;
+}
+
+.a-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
 .a-demo-note {
   display: flex;
   justify-content: space-between;
