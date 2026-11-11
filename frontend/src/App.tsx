@@ -21,6 +21,7 @@ import NewsDetail from './pages/NewsDetail'
 import './pages/content.css'
 import Seo from './components/Seo'
 import Partners from './pages/Partners'
+import ScrollReveal from './components/ScrollReveal'
 
 const pages = [
   { path: '/partners', element: <Partners /> },
@@ -38,6 +39,7 @@ export default function App() {
     <>
       <Seo />
       <RouteScrollReset />
+      <ScrollReveal />
       <SiteActivityTracker />
       <Routes>
         <Route path="/admin/*" element={<AdminAccess />} />

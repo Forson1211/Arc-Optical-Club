@@ -25,7 +25,7 @@ export default function OurStory() {
       <Container className="relative z-10 -mt-20 max-w-[1100px]">
         <div className="grid gap-5 md:grid-cols-3">
           {values.map(({ title, icon: Icon, text }) => (
-            <section key={title} className="flex flex-col items-center rounded-xl bg-white px-6 py-8 text-center shadow-[0_18px_45px_rgba(20,43,59,0.1)] sm:px-8 md:min-h-[246px]">
+            <section key={title} className="values-card flex flex-col items-center rounded-xl bg-white px-6 py-8 text-center shadow-[0_18px_45px_rgba(20,43,59,0.1)] sm:px-8 md:min-h-[246px]">
               <Icon size={44} strokeWidth={1.5} className="text-arc-blue" aria-hidden="true" />
               <h2 className="mt-5 text-lg font-extrabold tracking-[-0.025em] text-arc-navy">{title}</h2>
               <p className="mt-3 text-[13px] leading-6 text-arc-slate">{text}</p>

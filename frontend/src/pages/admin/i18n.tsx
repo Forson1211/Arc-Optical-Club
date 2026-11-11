@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 
@@ -462,7 +463,7 @@ export interface I18nContextType {
 
 const defaultI18n: I18nContextType = {
   lang: 'en',
-  setLang: () => {},
+  setLang: () => { },
   t: (key: TranslationKey, fallback?: string) => translations.en[key] || fallback || key,
   formatDate: (date: Date) => date.toLocaleDateString('en-GB'),
 }

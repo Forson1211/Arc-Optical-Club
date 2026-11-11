@@ -191,6 +191,153 @@ button, input, textarea, select { font: inherit; }
   .hero-mobile-description > span { display: block; white-space: nowrap; }
 }
 
+/* ========================================================
+   SCROLL REVEAL & INTERACTIVE MOTION ENGINE
+   ======================================================== */
+:root {
+  --reveal-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --reveal-duration: 0.72s;
+}
+
+/* Base scroll animation state - ONLY applies when client JS initializes */
+html.has-scroll-animations .reveal-init {
+  transition: opacity var(--reveal-duration) var(--reveal-ease),
+              transform var(--reveal-duration) var(--reveal-ease);
+}
+
+html.has-scroll-animations .reveal-init:not(.is-revealed) {
+  opacity: 0 !important;
+  will-change: opacity, transform;
+}
+
+html.has-scroll-animations .reveal-card:not(.is-revealed) {
+  transform: translateY(32px) scale(0.985);
+}
+
+html.has-scroll-animations .reveal-heading:not(.is-revealed) {
+  transform: translateY(24px);
+}
+
+html.has-scroll-animations .reveal-text:not(.is-revealed) {
+  transform: translateY(16px);
+}
+
+html.has-scroll-animations .reveal-button:not(.is-revealed) {
+  transform: translateY(14px) scale(0.98);
+}
+
+html.has-scroll-animations .reveal-init.is-revealed {
+  opacity: 1;
+  will-change: auto;
+}
+
+/* ========================================================
+   CARD HOVER & INTERACTIVE ELEVATION
+   ======================================================== */
+.why-arc-card,
+.program-row,
+.partner-logo-card,
+.partner-item,
+.news-card,
+.values-card,
+.photo-grid button,
+.learning-options > section,
+.giving-options > a,
+.giving-feature,
+.donation-form,
+.donation-purpose,
+[aria-labelledby="team-heading"] article {
+  transition: transform 0.35s var(--reveal-ease), box-shadow 0.35s var(--reveal-ease), border-color 0.25s ease;
+}
+
+.values-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 42px -6px rgba(20, 43, 59, 0.16);
+}
+
+.program-row:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.16);
+}
+
+.learning-options > section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.18);
+}
+
+.news-card:hover {
+  transform: translateY(-5px);
+}
+
+.photo-grid button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+[aria-labelledby="team-heading"] article {
+  transition: transform 0.3s var(--reveal-ease);
+}
+[aria-labelledby="team-heading"] article:hover {
+  transform: translateY(-4px);
+}
+[aria-labelledby="team-heading"] article img {
+  transition: transform 0.4s var(--reveal-ease);
+}
+[aria-labelledby="team-heading"] article:hover img {
+  transform: scale(1.05);
+}
+
+/* ========================================================
+   BUTTON MICRO-INTERACTIONS & ACTIVE STATES
+   ======================================================== */
+.btn-primary,
+.btn-secondary,
+.hero-button,
+.page-button,
+.donation-submit {
+  position: relative;
+  transition: transform 0.22s var(--reveal-ease), box-shadow 0.22s var(--reveal-ease), background-color 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover,
+.hero-button:hover,
+.page-button:hover {
+  transform: translateY(-2.5px);
+  box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.28);
+}
+
+.btn-primary:active,
+.btn-secondary:active,
+.hero-button:active,
+.page-button:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.donation-submit:hover:not(:disabled) {
+  transform: translateY(-2.5px);
+  box-shadow: 0 10px 24px -4px rgba(254, 190, 1, 0.4);
+}
+.donation-submit:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Icon / Arrow Micro-Nudges */
+:is(.btn-primary, .btn-secondary, .hero-button, .page-button, .text-link, .learning-options a, .partner-item, a) svg:not(.lucide-rotate):not(.lucide-menu):not(.lucide-globe):not(.lucide-chevron-down) {
+  transition: transform 0.22s var(--reveal-ease);
+}
+
+:is(.btn-primary, .btn-secondary, .page-button, .text-link, .learning-options a):hover svg:not(.lucide-rotate):not(.lucide-menu):not(.lucide-globe):not(.lucide-chevron-down) {
+  transform: translate(3px, -3px);
+}
+
+:is(.text-link, a, button):hover svg.lucide-arrow-right {
+  transform: translateX(4px);
+}
+:is(.text-link, a, button):hover svg.lucide-arrow-left {
+  transform: translateX(-4px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .hero-reveal { animation: none; }
@@ -200,5 +347,14 @@ button, input, textarea, select { font: inherit; }
   .gallery-track { animation: none; transform: none; will-change: auto; }
   .gallery-group[aria-hidden="true"] { display: none; }
   .gallery-column { overflow-y: auto; scrollbar-width: thin; }
+  html.has-scroll-animations .reveal-init,
+  html.has-scroll-animations .reveal-card,
+  html.has-scroll-animations .reveal-heading,
+  html.has-scroll-animations .reveal-text,
+  html.has-scroll-animations .reveal-button {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
   *, *::before, *::after { transition-duration: .01ms !important; }
 }
